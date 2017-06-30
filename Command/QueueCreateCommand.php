@@ -72,7 +72,7 @@ class QueueCreateCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $queueName = $input->getArgument('name');
-        if ($this->getContainer()->has(sprintf('lms_service.sqs_queue.%s', $queueName))) {
+        if ($this->getContainer()->has(sprintf('tritran.sqs_queue.%s', $queueName))) {
             throw new \InvalidArgumentException(sprintf('Queue [%s] exists. Please use another name.', $queueName));
         }
 
