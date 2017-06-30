@@ -21,8 +21,8 @@ class TriTranSqsQueueExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.yml');
+        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.xml');
 
         $this->configSQSQueue($container, $config);
     }
@@ -38,5 +38,13 @@ class TriTranSqsQueueExtension extends Extension
         if (isset($engineConfig['queues']) && !empty($engineConfig['queues'])) {
             $container->setParameter('tritran.sqs_queue.queues', $config['sqs_queue']['queues']);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAlias()
+    {
+        return 'tritran_sqs_queue';
     }
 }
