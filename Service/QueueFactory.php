@@ -79,4 +79,12 @@ class QueueFactory
 
         return $queue;
     }
+
+    /**
+     * @return SqsClient
+     */
+    public function getClient(): SqsClient
+    {
+        return $this->client;
+    }
 }
