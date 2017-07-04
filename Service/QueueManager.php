@@ -94,11 +94,15 @@ class QueueManager
 
     /**
      * @param string $queueUrl
+     *
+     * @return bool
      */
     public function deleteQueue(string $queueUrl)
     {
         try {
             $this->client->deleteQueue(['QueueUrl' => $queueUrl]);
+
+            return true;
         } catch (AwsException $e) {
             throw new \InvalidArgumentException($e->getAwsErrorMessage());
         }
@@ -107,6 +111,8 @@ class QueueManager
     /**
      * @param string $queueUrl
      * @param array $queueAttribute
+     *
+     * @return bool
      */
     public function setQueueAttributes(string $queueUrl, array $queueAttribute)
     {
@@ -120,6 +126,8 @@ class QueueManager
 
         try {
             $this->client->setQueueAttributes($attr);
+
+            return true;
         } catch (AwsException $e) {
             throw new \InvalidArgumentException($e->getAwsErrorMessage());
         }
@@ -147,5 +155,13 @@ class QueueManager
         }
 
         return $attr;
+    }
+
+    /**
+     * @return SqsClient
+     */
+    public function getClient(): SqsClient
+    {
+        return $this->client;
     }
 }
