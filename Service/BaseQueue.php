@@ -72,7 +72,6 @@ class BaseQueue
 
     /**
      * @param Message $message
-     *
      * @param int $delay
      *
      * @return string
@@ -90,7 +89,7 @@ class BaseQueue
             $result = $this->client->sendMessage($params);
             $messageId = $result->get('MessageId');
         } catch (AwsException $e) {
-            error_log($e->getMessage());
+            throw new \InvalidArgumentException($e->getAwsErrorMessage());
         }
 
         return $messageId;
@@ -129,7 +128,7 @@ class BaseQueue
                 }
             }
         } catch (AwsException $e) {
-            error_log($e->getMessage());
+            throw new \InvalidArgumentException($e->getAwsErrorMessage());
         }
 
         return $collection;
@@ -139,6 +138,8 @@ class BaseQueue
      * Deletes the specified message from the specified queue
      *
      * @param string $receiptHandle An identifier associated with the act of receiving the message
+     *
+     * @return bool
      */
     public function deleteMessage(string $receiptHandle)
     {
@@ -147,14 +148,18 @@ class BaseQueue
                 'QueueUrl' => $this->queueUrl,
                 'ReceiptHandle' => $receiptHandle
             ]);
+
+            return true;
         } catch (AwsException $e) {
-            error_log($e->getMessage());
+            throw new \InvalidArgumentException($e->getAwsErrorMessage());
         }
     }
 
     /**
      * Deletes the messages in a queue.
      * When you use the this action, you can't retrieve a message deleted from a queue.
+     *
+     * @return bool
      */
     public function purge()
     {
@@ -162,8 +167,10 @@ class BaseQueue
             $this->client->purgeQueue([
                 'QueueUrl' => $this->queueUrl
             ]);
+
+            return true;
         } catch (AwsException $e) {
-            error_log($e->getMessage());
+            throw new \InvalidArgumentException($e->getAwsErrorMessage());
         }
     }
 
@@ -213,9 +220,21 @@ class BaseQueue
 
     /**
      * @param array $attributes
+     *
+     * @return $this
      */
     public function setAttributes(array $attributes)
     {
         $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * @return SqsClient
+     */
+    public function getClient(): SqsClient
+    {
+        return $this->client;
     }
 }
