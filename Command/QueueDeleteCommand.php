@@ -34,7 +34,7 @@ class QueueDeleteCommand extends ContainerAwareCommand
                 InputOption::VALUE_NONE,
                 'Set this parameter to execute this command'
             )
-            ->setDescription('Create a queue by name and basic attributions');
+            ->setDescription('Delete a queue by url and all its messages');
     }
 
     /**
