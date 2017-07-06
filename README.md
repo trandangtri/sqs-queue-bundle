@@ -34,7 +34,8 @@ class AppKernel extends Kernel
     {
         return [
             // ...
-            new TriTran\SqsQueueBundle\TriTranSqsQueueBundle(),
+            new \Aws\Symfony\AwsBundle(),
+            new \TriTran\SqsQueueBundle\TriTranSqsQueueBundle(),
         ];
     }
 
@@ -51,10 +52,12 @@ Below are sample configuration for AWS Credential in YAML format
 ```yml
 # app/config/config.yml
 
-aws_version: latest
-aws_region: eu-central-1
-aws_credentials_key: CREDENTIAL-KEYS
-aws_credentials_secret: CREDENTIAL-SECRET
+aws:
+    version: latest
+    region: us-central-1
+    credentials:
+        key: not-a-real-key
+        secret: "@not-a-real-secret"
 ```
 
 ### Step 4: Configure the Queues

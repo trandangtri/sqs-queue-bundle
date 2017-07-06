@@ -78,7 +78,6 @@ class BaseQueue
      */
     public function sendMessage(Message $message, int $delay = 0)
     {
-        $messageId = '';
         $params = [
             'DelaySeconds' => $delay,
             'MessageAttributes' => $message->getAttributes(),

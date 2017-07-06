@@ -1,0 +1,25 @@
+# Framework Configuration
+framework:
+    secret: 'secret'
+    router:
+        resource: ~
+        strict_requirements: %kernel.debug%
+    templating:
+        engines: ['twig']
+    test: ~
+
+aws:
+    version: latest
+    region: us-central-1
+    credentials:
+        key: not-a-real-key
+        secret: '@@not-a-real-secret'
+
+tritran_sqs_queue:
+    sqs_queue:
+        queues:
+            basic_queue:
+                queue_url: 'aws-basic-queue-url'
+                worker: 'TriTran\SqsQueueBundle\Tests\app\Worker\BasicWorker'
+                attributes:
+                    receive_message_wait_time_seconds: 20
