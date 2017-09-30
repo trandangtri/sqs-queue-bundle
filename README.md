@@ -3,6 +3,7 @@ Simple AWS SQS Queue for PHP
 
 This bundle provides an easy way to work with AWS SQS
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/966e2515-0177-4b80-8ef0-cfc9bd800a81/mini.png)](https://insight.sensiolabs.com/projects/966e2515-0177-4b80-8ef0-cfc9bd800a81)
 [![Latest Stable Version](https://poser.pugx.org/tritran/sqs-queue-bundle/v/stable)](https://packagist.org/packages/tritran/sqs-queue-bundle)
 [![Latest Unstable Version](https://poser.pugx.org/tritran/sqs-queue-bundle/v/unstable)](https://packagist.org/packages/tritran/sqs-queue-bundle)
 [![Build Status](https://api.travis-ci.org/trandangtri/sqs-queue-bundle.svg?branch=master)](https://travis-ci.org/trandangtri/sqs-queue-bundle)
