@@ -35,7 +35,7 @@ abstract class AbstractWorker
      */
     protected function preExecute(Message $message)
     {
-        // TODO: do something here
+        // Do something here
     }
 
     /**
@@ -43,7 +43,7 @@ abstract class AbstractWorker
      */
     protected function postExecute(Message $message)
     {
-        // TODO: do something here
+        // Do something here
     }
 
     /**
