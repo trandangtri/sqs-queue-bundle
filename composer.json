@@ -13,8 +13,7 @@
   "require": {
     "php": ">=5.5",
     "symfony/symfony": "~2.7|~3.0",
-    "aws/aws-sdk-php-symfony": "~1.0",
-    "roave/security-advisories": "dev-master"
+    "aws/aws-sdk-php-symfony": "~1.0"
   },
   "require-dev": {
     "symfony/monolog-bundle": "~2.5",
@@ -33,6 +32,5 @@
     "exclude-from-classmap": [
       "/Tests/"
     ]
-  },
-  "minimum-stability": "dev"
+  }
 }
