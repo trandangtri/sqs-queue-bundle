@@ -115,8 +115,8 @@ class BaseQueue
             ]);
 
             $messages = $result->get('Messages');
-            if ($messages != null) {
-                for ($i = 0; $i < count($messages); $i++) {
+            if ($messages !== null) {
+                for ($i = 0, $n = count($messages); $i < $n; $i++) {
                     $message = new Message();
                     $message->setId($messages[$i]['MessageId']);
                     $message->setBody($messages[$i]['Body']);
