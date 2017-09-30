@@ -1,6 +1,6 @@
 {
   "name": "tritran/sqs-queue-bundle",
-  "description": "Simple SQS Queue for PHP",
+  "description": "Simple SQS Queue for Symfony",
   "type": "symfony-bundle",
   "homepage": "http://www.ideason.vn",
   "license": "MIT",

@@ -1,5 +1,5 @@
-Simple AWS SQS Queue for PHP
-============================
+Simple AWS SQS Queue for Symfony
+================================
 
 This bundle provides an easy way to work with AWS SQS
 
