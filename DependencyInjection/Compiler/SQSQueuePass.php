@@ -31,6 +31,15 @@ class SQSQueuePass implements CompilerPassInterface
             /** @var array $queues */
             $queues = $container->getParameter('tritran.sqs_queue.queues');
             foreach ($queues as $queueName => $queueOption) {
+                $defaultQueueServices = ['queues', 'queue_factory', 'queue_manager', 'queue_worker'];
+                if (in_array($queueName, $defaultQueueServices, true)) {
+                    throw new \InvalidArgumentException(sprintf(
+                        'Invalid queue-name [%s]. Predefined queue-name: (%s)',
+                        $queueName,
+                        implode(', ', $defaultQueueServices)
+                    ));
+                }
+
                 $queueOption['worker'] = preg_replace('/^@/', '', $queueOption['worker']);
                 if ($container->has($queueOption['worker'])) {
                     $callable = new Reference($queueOption['worker']);

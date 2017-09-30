@@ -38,13 +38,37 @@ class SQSQueuePassTest extends TestCase
     /**
      * Make sure the worker of queue should be a valid and callable service.
      */
-    public function testProcessFailure()
+    public function testProcessFailureWithBadWorker()
     {
         $container = $this->getContainer();
         $container->setDefinition('aws.sqs', new Definition());
         $container->setParameter(
             'tritran.sqs_queue.queues',
             ['queue-name' => ['queue_url' => 'my-url', 'worker' => 'bad-worker']]
+        );
+
+        $compiler = new SQSQueuePass();
+        $this->expectException(\InvalidArgumentException::class);
+        $compiler->process($container);
+    }
+
+    /**
+     * Make sure the name of queue should be different with predefined queue-name
+     */
+    public function testProcessFailureWithPredefinedQueueName()
+    {
+        $container = $this->getContainer();
+        $container->setDefinition('aws.sqs', new Definition());
+
+        $defaultQueueServices = ['queues', 'queue_factory', 'queue_manager', 'queue_worker', 'basic_queue'];
+        $container->setParameter(
+            'tritran.sqs_queue.queues',
+            [
+                $defaultQueueServices[array_rand($defaultQueueServices)] => [
+                    'queue_url' => 'my-url',
+                    'worker' => 'bad-worker'
+                ]
+            ]
         );
 
         $compiler = new SQSQueuePass();
