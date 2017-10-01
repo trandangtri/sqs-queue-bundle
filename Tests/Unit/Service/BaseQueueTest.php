@@ -45,7 +45,7 @@ class BaseQueueTest extends TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|SqsClient $client */
         $client = $this->getMockBuilder(SqsClient::class)
             ->disableOriginalConstructor()
-            ->setMethods(['sendMessage', 'receiveMessage', 'deleteMessage', 'purgeQueue'])
+            ->setMethods(['sendMessage', 'receiveMessage', 'deleteMessage', 'changeMessageVisibility', 'purgeQueue'])
             ->getMock();
 
         return $client;
@@ -269,6 +269,54 @@ class BaseQueueTest extends TestCase
         $queue = new BaseQueue($client, 'bad-queue-name', $queueUrl, new BasicWorker(), []);
         $this->expectException(\InvalidArgumentException::class);
         $queue->deleteMessage($message);
+    }
+
+    /**
+     * Test: Release a message from processing, making it visible again
+     */
+    public function testReleaseMessage()
+    {
+        $queueUrl = 'queue-url';
+        $message = (new Message())->setReceiptHandle('my-receipt-handle');
+
+        $client = $this->getAwsClient();
+        $client->expects($this->any())
+            ->method('changeMessageVisibility')
+            ->with([
+                'QueueUrl' => $queueUrl,
+                'ReceiptHandle' => $message->getReceiptHandle(),
+                'VisibilityTimeout' => 0
+            ])
+            ->willReturn(true);
+
+        $queue = new BaseQueue($client, 'queue-name', $queueUrl, new BasicWorker(), []);
+        $this->assertTrue($queue->releaseMessage($message));
+    }
+
+    /**
+     * Test: Release a message from processing in failure
+     */
+    public function testReleaseMessageFailure()
+    {
+        $queueUrl = 'bad-queue-url';
+        $message = (new Message())->setReceiptHandle('my-receipt-handle');
+
+        $client = $this->getAwsClient();
+        $client->expects($this->any())
+            ->method('changeMessageVisibility')
+            ->with([
+                'QueueUrl' => $queueUrl,
+                'ReceiptHandle' => $message->getReceiptHandle(),
+                'VisibilityTimeout' => 0
+            ])
+            ->willThrowException(new AwsException(
+                'AWS Client Exception',
+                new Command('release-message-command')
+            ));
+
+        $queue = new BaseQueue($client, 'bad-queue-name', $queueUrl, new BasicWorker(), []);
+        $this->expectException(\InvalidArgumentException::class);
+        $queue->releaseMessage($message);
     }
 
     /**
