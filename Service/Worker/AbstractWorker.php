@@ -15,7 +15,7 @@ abstract class AbstractWorker
      *
      * @return bool
      */
-    final public function run(Message $message)
+    final public function process(Message $message)
     {
         if ($message->getBody() === 'ping') {
             echo 'Pong. Now is ' . (new \DateTime('now'))->format('M d, Y H:i:s') . PHP_EOL;
@@ -24,7 +24,11 @@ abstract class AbstractWorker
         }
 
         $this->preExecute($message);
-        $result = $this->execute($message);
+        try {
+            $result = $this->execute($message);
+        } catch (\Exception $e) {
+            return false;
+        }
         $this->postExecute($message);
 
         return $result;

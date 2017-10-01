@@ -108,7 +108,11 @@ class SQSQueuePassTest extends TestCase
                             'MaximumMessageSize' => 262144,
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 0,
-                            'VisibilityTimeout' => 30
+                            'VisibilityTimeout' => 30,
+                            'RedrivePolicy' => json_encode([
+                                'deadLetterTargetArn' => '',
+                                'maxReceiveCount' => 5
+                            ])
                         ]
                     ]
                 ]
@@ -125,7 +129,11 @@ class SQSQueuePassTest extends TestCase
                             'maximum_message_size' => 1,
                             'message_retention_period' => 1,
                             'receive_message_wait_time_seconds' => 1,
-                            'visibility_timeout' => 1
+                            'visibility_timeout' => 1,
+                            'redrive_policy' => [
+                                'dead_letter_queue' => 'basic_dead_letter_queue_1',
+                                'max_receive_count' => 1
+                            ]
                         ]
                     ]
                 ],
@@ -138,7 +146,11 @@ class SQSQueuePassTest extends TestCase
                             'MaximumMessageSize' => 1,
                             'MessageRetentionPeriod' => 1,
                             'ReceiveMessageWaitTimeSeconds' => 1,
-                            'VisibilityTimeout' => 1
+                            'VisibilityTimeout' => 1,
+                            'RedrivePolicy' => json_encode([
+                                'deadLetterTargetArn' => 'basic_dead_letter_queue_1',
+                                'maxReceiveCount' => 1
+                            ])
                         ]
                     ]
                 ]
@@ -155,7 +167,11 @@ class SQSQueuePassTest extends TestCase
                             'maximum_message_size' => 2,
                             'message_retention_period' => 2,
                             'receive_message_wait_time_seconds' => 2,
-                            'visibility_timeout' => 2
+                            'visibility_timeout' => 2,
+                            'redrive_policy' => [
+                                'dead_letter_queue' => 'basic_dead_letter_queue_2',
+                                'max_receive_count' => 2
+                            ]
                         ]
                     ]
                 ],
@@ -168,7 +184,11 @@ class SQSQueuePassTest extends TestCase
                             'MaximumMessageSize' => 2,
                             'MessageRetentionPeriod' => 2,
                             'ReceiveMessageWaitTimeSeconds' => 2,
-                            'VisibilityTimeout' => 2
+                            'VisibilityTimeout' => 2,
+                            'RedrivePolicy' => json_encode([
+                                'deadLetterTargetArn' => 'basic_dead_letter_queue_2',
+                                'maxReceiveCount' => 2
+                            ])
                         ]
                     ]
                 ]
@@ -189,7 +209,11 @@ class SQSQueuePassTest extends TestCase
                             'MaximumMessageSize' => 262144,
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 0,
-                            'VisibilityTimeout' => 30
+                            'VisibilityTimeout' => 30,
+                            'RedrivePolicy' => json_encode([
+                                'deadLetterTargetArn' => '',
+                                'maxReceiveCount' => 5
+                            ])
                         ]
                     ],
                     'basic-queue-2' => [
@@ -200,7 +224,11 @@ class SQSQueuePassTest extends TestCase
                             'MaximumMessageSize' => 262144,
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 0,
-                            'VisibilityTimeout' => 30
+                            'VisibilityTimeout' => 30,
+                            'RedrivePolicy' => json_encode([
+                                'deadLetterTargetArn' => '',
+                                'maxReceiveCount' => 5
+                            ])
                         ]
                     ]
                 ]

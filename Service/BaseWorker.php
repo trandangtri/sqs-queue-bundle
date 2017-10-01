@@ -43,9 +43,11 @@ class BaseWorker
         while ($messages->valid()) {
             /** @var Message $message */
             $message = $messages->current();
-            $result = $consumer->run($message);
+            $result = $consumer->process($message);
             if ($result !== false) {
-                $queue->deleteMessage($message->getReceiptHandle());
+                $queue->deleteMessage($message);
+            } else {
+                $queue->releaseMessage($message);
             }
 
             $messages->next();

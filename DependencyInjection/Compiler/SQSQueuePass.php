@@ -72,7 +72,13 @@ class SQSQueuePass implements CompilerPassInterface
                             'ReceiveMessageWaitTimeSeconds' =>
                                 $queueOption['attributes']['receive_message_wait_time_seconds'] ?? 0,
                             'VisibilityTimeout' =>
-                                $queueOption['attributes']['visibility_timeout'] ?? 30
+                                $queueOption['attributes']['visibility_timeout'] ?? 30,
+                            'RedrivePolicy' => json_encode([
+                                'deadLetterTargetArn' =>
+                                    $queueOption['attributes']['redrive_policy']['dead_letter_queue'] ?? '',
+                                'maxReceiveCount' =>
+                                    $queueOption['attributes']['redrive_policy']['max_receive_count'] ?? 5,
+                            ])
                         ]
                     ]);
 

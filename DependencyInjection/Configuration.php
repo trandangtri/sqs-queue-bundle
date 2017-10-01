@@ -65,6 +65,22 @@ class Configuration implements ConfigurationInterface
                 ->append((new IntegerNodeDefinition('message_retention_period'))->defaultValue(345600)->min(60)->max(1209600))// 4 days
                 ->append((new IntegerNodeDefinition('receive_message_wait_time_seconds'))->defaultValue(0)->min(0)->max(20))// seconds
                 ->append((new IntegerNodeDefinition('visibility_timeout'))->defaultValue(30)->min(0)->max(43200))// second
+                ->append($this->getSQSRedrivePolicyNode())
+            ->end();
+    }
+
+    /**
+     * @return NodeDefinition|ParentNodeDefinitionInterface
+     */
+    protected function getSQSRedrivePolicyNode()
+    {
+        $node = new ArrayNodeDefinition('redrive_policy');
+
+        return $node
+            ->canBeUnset()
+            ->children()
+                ->append((new IntegerNodeDefinition('max_receive_count'))->defaultValue(5)->min(1)->max(1000))
+                ->append((new ScalarNodeDefinition('dead_letter_queue'))->isRequired())
             ->end();
     }
 
