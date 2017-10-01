@@ -107,7 +107,7 @@ class BaseQueueTest extends TestCase
      */
     public function testSendMessage()
     {
-        $delay = rand(1, 10);
+        $delay = random_int(1, 10);
         $messageBody = 'my-message';
         $messageAttr = ['x', 'y', 'z'];
         $queueUrl = 'queue-url';
@@ -155,9 +155,9 @@ class BaseQueueTest extends TestCase
      */
     public function testReceiveMessage()
     {
-        $limit = rand(1, 10);
+        $limit = random_int(1, 10);
         $queueUrl = 'queue-url';
-        $queueAttr = ['receive_message_wait_time_seconds' => rand(1, 10)];
+        $queueAttr = ['receive_message_wait_time_seconds' => random_int(1, 10)];
         $expected = [
             [
                 'MessageId' => 'my-message-id',
@@ -193,16 +193,14 @@ class BaseQueueTest extends TestCase
     private function arrayMessageToCollection($messages)
     {
         $collection = new MessageCollection([]);
-        if ($messages != null) {
-            for ($i = 0; $i < count($messages); $i++) {
-                $message = new Message();
-                $message->setId($messages[$i]['MessageId']);
-                $message->setBody($messages[$i]['Body']);
-                $message->setReceiptHandle($messages[$i]['ReceiptHandle']);
-                $message->setAttributes($messages[$i]['Attributes']);
-
-                $collection->append($message);
-            }
+        foreach ($messages as $message) {
+            $collection->append(
+                (new Message())
+                    ->setId($message['MessageId'])
+                    ->setBody($message['Body'])
+                    ->setReceiptHandle($message['ReceiptHandle'])
+                    ->setAttributes($message['Attributes'])
+            );
         }
 
         return $collection;
@@ -233,19 +231,19 @@ class BaseQueueTest extends TestCase
     public function testDeleteMessage()
     {
         $queueUrl = 'queue-url';
-        $receiptHandle = 'my-receipt-handle';
+        $message = (new Message())->setReceiptHandle('my-receipt-handle');
 
         $client = $this->getAwsClient();
         $client->expects($this->any())
             ->method('deleteMessage')
             ->with([
                 'QueueUrl' => $queueUrl,
-                'ReceiptHandle' => $receiptHandle
+                'ReceiptHandle' => $message->getReceiptHandle()
             ])
             ->willReturn(true);
 
         $queue = new BaseQueue($client, 'queue-name', $queueUrl, new BasicWorker(), []);
-        $this->assertTrue($queue->deleteMessage($receiptHandle));
+        $this->assertTrue($queue->deleteMessage($message));
     }
 
     /**
@@ -254,14 +252,14 @@ class BaseQueueTest extends TestCase
     public function testDeleteMessageFailure()
     {
         $queueUrl = 'bad-queue-url';
-        $receiptHandle = 'my-receipt-handle';
+        $message = (new Message())->setReceiptHandle('my-receipt-handle');
 
         $client = $this->getAwsClient();
         $client->expects($this->any())
             ->method('deleteMessage')
             ->with([
                 'QueueUrl' => $queueUrl,
-                'ReceiptHandle' => $receiptHandle
+                'ReceiptHandle' => $message->getReceiptHandle()
             ])
             ->willThrowException(new AwsException(
                 'AWS Client Exception',
@@ -270,7 +268,7 @@ class BaseQueueTest extends TestCase
 
         $queue = new BaseQueue($client, 'bad-queue-name', $queueUrl, new BasicWorker(), []);
         $this->expectException(\InvalidArgumentException::class);
-        $queue->deleteMessage($receiptHandle);
+        $queue->deleteMessage($message);
     }
 
     /**

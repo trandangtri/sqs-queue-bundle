@@ -114,17 +114,15 @@ class BaseQueue
                 'WaitTimeSeconds' => $this->attributes['receive_message_wait_time_seconds'] ?? 0,
             ]);
 
-            $messages = $result->get('Messages');
-            if ($messages !== null) {
-                for ($i = 0, $n = count($messages); $i < $n; $i++) {
-                    $message = new Message();
-                    $message->setId($messages[$i]['MessageId']);
-                    $message->setBody($messages[$i]['Body']);
-                    $message->setReceiptHandle($messages[$i]['ReceiptHandle']);
-                    $message->setAttributes($messages[$i]['Attributes']);
-
-                    $collection->append($message);
-                }
+            $messages = $result->get('Messages') ?? [];
+            foreach ($messages as $message) {
+                $collection->append(
+                    (new Message())
+                        ->setId($message['MessageId'])
+                        ->setBody($message['Body'])
+                        ->setReceiptHandle($message['ReceiptHandle'])
+                        ->setAttributes($message['Attributes'])
+                );
             }
         } catch (AwsException $e) {
             throw new \InvalidArgumentException($e->getAwsErrorMessage());
@@ -136,16 +134,38 @@ class BaseQueue
     /**
      * Deletes the specified message from the specified queue
      *
-     * @param string $receiptHandle An identifier associated with the act of receiving the message
+     * @param Message $message
      *
      * @return bool
      */
-    public function deleteMessage(string $receiptHandle)
+    public function deleteMessage(Message $message)
     {
         try {
             $this->client->deleteMessage([
                 'QueueUrl' => $this->queueUrl,
-                'ReceiptHandle' => $receiptHandle
+                'ReceiptHandle' => $message->getReceiptHandle()
+            ]);
+
+            return true;
+        } catch (AwsException $e) {
+            throw new \InvalidArgumentException($e->getAwsErrorMessage());
+        }
+    }
+
+    /**
+     * Releases a message back to the queue, making it visible again
+     *
+     * @param Message $message
+     *
+     * @return bool
+     */
+    public function releaseMessage(Message $message)
+    {
+        try {
+            $this->client->changeMessageVisibility([
+                'QueueUrl' => $this->queueUrl,
+                'ReceiptHandle' => $message->getReceiptHandle(),
+                'VisibilityTimeout' => 0
             ]);
 
             return true;
