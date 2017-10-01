@@ -7,7 +7,7 @@ This bundle provides an easy way to work with AWS SQS
 [![Latest Stable Version](https://poser.pugx.org/tritran/sqs-queue-bundle/v/stable)](https://packagist.org/packages/tritran/sqs-queue-bundle)
 [![Latest Unstable Version](https://poser.pugx.org/tritran/sqs-queue-bundle/v/unstable)](https://packagist.org/packages/tritran/sqs-queue-bundle)
 [![Build Status](https://api.travis-ci.org/trandangtri/sqs-queue-bundle.svg?branch=master)](https://travis-ci.org/trandangtri/sqs-queue-bundle)
-[![Coverage Status](https://coveralls.io/repos/github/trandangtri/sqs-queue-bundle/badge.svg?branch=master)](https://coveralls.io/github/trandangtri/sqs-queue-bundle?branch=master)
+[![codecov](https://codecov.io/gh/trandangtri/sqs-queue-bundle/branch/master/graph/badge.svg)](https://codecov.io/gh/trandangtri/sqs-queue-bundle)
 
 Installation
 ---
