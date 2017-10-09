@@ -157,7 +157,7 @@ class BaseQueueTest extends TestCase
     {
         $limit = random_int(1, 10);
         $queueUrl = 'queue-url';
-        $queueAttr = ['receive_message_wait_time_seconds' => random_int(1, 10)];
+        $queueAttr = ['ReceiveMessageWaitTimeSeconds' => random_int(1, 10)];
         $expected = [
             [
                 'MessageId' => 'my-message-id',
@@ -175,7 +175,7 @@ class BaseQueueTest extends TestCase
                 'MaxNumberOfMessages' => $limit,
                 'MessageAttributeNames' => ['All'],
                 'QueueUrl' => $queueUrl,
-                'WaitTimeSeconds' => $queueAttr['receive_message_wait_time_seconds'],
+                'WaitTimeSeconds' => $queueAttr['ReceiveMessageWaitTimeSeconds'],
             ])
             ->willReturn($this->getAwsResult(['Messages' => $expected]));
 
