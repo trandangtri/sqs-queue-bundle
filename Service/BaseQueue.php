@@ -111,7 +111,7 @@ class BaseQueue
                 'MaxNumberOfMessages' => $limit,
                 'MessageAttributeNames' => ['All'],
                 'QueueUrl' => $this->queueUrl,
-                'WaitTimeSeconds' => $this->attributes['receive_message_wait_time_seconds'] ?? 0,
+                'WaitTimeSeconds' => $this->attributes['ReceiveMessageWaitTimeSeconds'] ?? 0,
             ]);
 
             $messages = $result->get('Messages') ?? [];
