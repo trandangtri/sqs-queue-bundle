@@ -109,10 +109,7 @@ class SQSQueuePassTest extends TestCase
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 0,
                             'VisibilityTimeout' => 30,
-                            'RedrivePolicy' => json_encode([
-                                'deadLetterTargetArn' => '',
-                                'maxReceiveCount' => 5
-                            ])
+                            'RedrivePolicy' => ''
                         ]
                     ]
                 ]
@@ -193,7 +190,7 @@ class SQSQueuePassTest extends TestCase
                     ]
                 ]
             ],
-            // Case #2: Load multi queues at the same time
+            // Case #3: Load multi queues at the same time
             [
                 $container,
                 [
@@ -210,10 +207,7 @@ class SQSQueuePassTest extends TestCase
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 0,
                             'VisibilityTimeout' => 30,
-                            'RedrivePolicy' => json_encode([
-                                'deadLetterTargetArn' => '',
-                                'maxReceiveCount' => 5
-                            ])
+                            'RedrivePolicy' => ''
                         ]
                     ],
                     'basic-queue-2' => [
@@ -225,10 +219,7 @@ class SQSQueuePassTest extends TestCase
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 0,
                             'VisibilityTimeout' => 30,
-                            'RedrivePolicy' => json_encode([
-                                'deadLetterTargetArn' => '',
-                                'maxReceiveCount' => 5
-                            ])
+                            'RedrivePolicy' => ''
                         ]
                     ]
                 ]
