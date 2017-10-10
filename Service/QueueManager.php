@@ -24,7 +24,8 @@ class QueueManager
         'MaximumMessageSize' => 262144, // 256 KiB
         'MessageRetentionPeriod' => 345600, // 4 days
         'ReceiveMessageWaitTimeSeconds' => 0,
-        'VisibilityTimeout' => 30
+        'VisibilityTimeout' => 30,
+        'RedrivePolicy' => ''
     ];
 
     /**
