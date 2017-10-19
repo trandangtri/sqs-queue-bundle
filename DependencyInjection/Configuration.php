@@ -63,7 +63,7 @@ class Configuration implements ConfigurationInterface
                 ->append((new IntegerNodeDefinition('delay_seconds'))->defaultValue(0)->min(0)->max(900))// zero second
                 ->append((new IntegerNodeDefinition('maximum_message_size'))->defaultValue(262144)->min(1024)->max(262144))// 256 KiB
                 ->append((new IntegerNodeDefinition('message_retention_period'))->defaultValue(345600)->min(60)->max(1209600))// 4 days
-                ->append((new IntegerNodeDefinition('receive_message_wait_time_seconds'))->defaultValue(0)->min(0)->max(20))// seconds
+                ->append((new IntegerNodeDefinition('receive_message_wait_time_seconds'))->defaultValue(20)->min(0)->max(20))// seconds
                 ->append((new IntegerNodeDefinition('visibility_timeout'))->defaultValue(30)->min(0)->max(43200))// second
                 ->append($this->getSQSRedrivePolicyNode())
             ->end();
