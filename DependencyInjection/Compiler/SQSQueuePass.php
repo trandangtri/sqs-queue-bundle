@@ -70,7 +70,7 @@ class SQSQueuePass implements CompilerPassInterface
                             'MessageRetentionPeriod' =>
                                 $queueOption['attributes']['message_retention_period'] ?? 345600,
                             'ReceiveMessageWaitTimeSeconds' =>
-                                $queueOption['attributes']['receive_message_wait_time_seconds'] ?? 0,
+                                $queueOption['attributes']['receive_message_wait_time_seconds'] ?? 20,
                             'VisibilityTimeout' =>
                                 $queueOption['attributes']['visibility_timeout'] ?? 30,
                             'RedrivePolicy' => !empty($queueOption['attributes']['redrive_policy']['dead_letter_queue'])
