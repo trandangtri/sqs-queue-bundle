@@ -107,7 +107,7 @@ class SQSQueuePassTest extends TestCase
                             'DelaySeconds' => 0,
                             'MaximumMessageSize' => 262144,
                             'MessageRetentionPeriod' => 345600,
-                            'ReceiveMessageWaitTimeSeconds' => 0,
+                            'ReceiveMessageWaitTimeSeconds' => 20,
                             'VisibilityTimeout' => 30,
                             'RedrivePolicy' => ''
                         ]
@@ -205,7 +205,7 @@ class SQSQueuePassTest extends TestCase
                             'DelaySeconds' => 0,
                             'MaximumMessageSize' => 262144,
                             'MessageRetentionPeriod' => 345600,
-                            'ReceiveMessageWaitTimeSeconds' => 0,
+                            'ReceiveMessageWaitTimeSeconds' => 20,
                             'VisibilityTimeout' => 30,
                             'RedrivePolicy' => ''
                         ]
@@ -217,7 +217,7 @@ class SQSQueuePassTest extends TestCase
                             'DelaySeconds' => 0,
                             'MaximumMessageSize' => 262144,
                             'MessageRetentionPeriod' => 345600,
-                            'ReceiveMessageWaitTimeSeconds' => 0,
+                            'ReceiveMessageWaitTimeSeconds' => 20,
                             'VisibilityTimeout' => 30,
                             'RedrivePolicy' => ''
                         ]

@@ -37,7 +37,7 @@ class KernelTestCase extends SymfonyKernelTestCase
      *
      * @return ContainerInterface
      */
-    protected function getContainer($reinitialize = false, $kernelOptions = [])
+    protected function getContainer($reinitialize = false, array $kernelOptions = [])
     {
         if ($this->container === null || $reinitialize) {
             static::bootKernel($kernelOptions);
@@ -61,8 +61,6 @@ class KernelTestCase extends SymfonyKernelTestCase
         $command->setContainer($this->getContainer());
         $application->add($command);
 
-        $command = $application->find($command->getName());
-
-        return new CommandTester($command);
+        return new CommandTester($application->find($command->getName()));
     }
 }
