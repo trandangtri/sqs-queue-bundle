@@ -165,7 +165,7 @@ class BaseQueue
             $this->client->changeMessageVisibility([
                 'QueueUrl' => $this->queueUrl,
                 'ReceiptHandle' => $message->getReceiptHandle(),
-                'VisibilityTimeout' => 0
+                'VisibilityTimeout' => $this->attributes['VisibilityTimeout']
             ]);
 
             return true;
