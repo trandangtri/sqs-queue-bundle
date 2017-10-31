@@ -87,6 +87,39 @@ Full documentation of the queue options available can be read in the [Queue Attr
 
 > Now, you could access to queue `emailpool` or `reminder` service via `tritran.sqs_queue.emailpool` or `tritran.sqs_queue.reminder`, it's an interface of [BaseQueue](https://github.com/trandangtri/sqs-queue-bundle/blob/master/Service/BaseQueue.php)
 
+Below are a sample implementation of sending a message to a specified queue
+
+```php
+namespace AclBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use TriTran\SqsQueueBundle\Service\Message;
+
+/**
+ * Class DefaultController
+ *
+ * @package AclBundle\Controller
+ */
+class DefaultController extends Controller
+{
+    public function indexAction()
+    {
+        // ...
+        
+        $data = [
+            'from' => 'sender@domain.com',
+            'to' => 'receiver@domain.com',
+            'subject' => 'Greeting Message',
+            'body' => 'Congratulation! You have just received a message which was sent from AWS SQS Queue'
+        ];
+        $this->get('tritran.sqs_queue.emailpool')
+            ->sendMessage((new Message())->setBody(serialize($data)));
+
+        // ...
+    }
+}
+```
+
 #### Queue Behaviours
 
 |Behaviour|Arguments|Description|
