@@ -4,6 +4,7 @@ namespace TriTran\SqsQueueBundle\Service;
 
 use Aws\Exception\AwsException;
 use Aws\Sqs\SqsClient;
+use TriTran\SqsQueueBundle\Service\MessageCollection;
 use TriTran\SqsQueueBundle\Service\Worker\AbstractWorker;
 
 /**
@@ -92,6 +93,41 @@ class BaseQueue
         }
 
         return $messageId;
+    }
+
+    /**
+     * @param MessageCollection $messages
+     * @param int $delay
+     *
+     * @return mixed|null
+     */
+    public function sendMessageBatch(MessageCollection $messages, int $delay = 0)
+    {
+        $params = [
+            'Entries' => [],
+            'QueueUrl' => $this->queueUrl
+        ];
+        $messages->rewind();
+        while ($messages->valid()) {
+            /** @var Message $message */
+            $message = $messages->current();
+            $params['Entries'][] = [
+                'DelaySeconds' => $delay,
+                'Id' => $message->getId(),
+                'MessageAttributes' => $message->getAttributes(),
+                'MessageBody' => $message->getBody()
+            ];
+
+            $messages->next();
+        }
+
+        try {
+            $result = $this->client->sendMessageBatch($params);
+        } catch (AwsException $e) {
+            throw new \InvalidArgumentException($e->getAwsErrorMessage());
+        }
+
+        return $result;
     }
 
     /**
