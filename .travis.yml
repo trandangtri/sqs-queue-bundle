@@ -16,5 +16,4 @@ script:
   - vendor/bin/phpunit --coverage-clover=coverage.xml
   - vendor/bin/phpcs -p --standard=PSR2 --ignore=vendor/,Tests/app/,Resources/public/ ./
 after_script:
-  - travis_retry php vendor/bin/coveralls -v
   - travis_retry bash <(curl -s https://codecov.io/bash)
