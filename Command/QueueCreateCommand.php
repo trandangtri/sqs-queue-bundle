@@ -47,7 +47,7 @@ class QueueCreateCommand extends ContainerAwareCommand
                 null,
                 InputOption::VALUE_REQUIRED,
                 'MessageRetentionPeriod',
-                60
+                345600
             )
             ->addOption(
                 'receive_message_wait_time_seconds',
