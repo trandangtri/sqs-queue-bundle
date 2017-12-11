@@ -13,21 +13,32 @@ class BaseWorker
     use LoggerAwareTrait;
 
     /**
+     * @var int
+     */
+    private $consumed;
+
+    /**
      * @param BaseQueue $queue
+     * @param int $amount
      * @param int $limit Zero is all
      */
-    public function start(BaseQueue $queue, int $limit = 1)
+    public function start(BaseQueue $queue, int $amount = 0, int $limit = 1)
     {
-        $this->consume($queue, $limit);
+        $this->consumed = 0;
+        $this->consume($queue, $amount, $limit);
     }
 
     /**
      * @param BaseQueue $queue
+     * @param int $amount
      * @param int $limit
      */
-    private function consume(BaseQueue $queue, int $limit = 1)
+    private function consume(BaseQueue $queue, int $amount = 0, int $limit = 1)
     {
         while (true) {
+            if ($amount && $this->consumed >= $amount) {
+                break;
+            }
             $this->fetchMessage($queue, $limit);
         }
     }
@@ -45,6 +56,8 @@ class BaseWorker
 
         $messages->rewind();
         while ($messages->valid()) {
+            $this->consumed++;
+
             /** @var Message $message */
             $message = $messages->current();
 

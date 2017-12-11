@@ -22,18 +22,16 @@ class QueueAttCommandTest extends KernelTestCase
      */
     public function setUp()
     {
-        if ($this->queueManager === null) {
-            $this->queueManager = $this->getMockBuilder(QueueManager::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-            $this->queueManager
-                ->expects($this->any())
-                ->method('getQueueAttributes')
-                ->with('my-queue-url')
-                ->willReturn(['att1' => 'value1', 'att2' => 'value2']);
+        $this->queueManager = $this->getMockBuilder(QueueManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->queueManager
+            ->expects($this->any())
+            ->method('getQueueAttributes')
+            ->with('my-queue-url')
+            ->willReturn(['att1' => 'value1', 'att2' => 'value2']);
 
-            $this->getContainer()->set('tritran.sqs_queue.queue_manager', $this->queueManager);
-        }
+        $this->getContainer()->set('tritran.sqs_queue.queue_manager', $this->queueManager);
     }
 
     /**
