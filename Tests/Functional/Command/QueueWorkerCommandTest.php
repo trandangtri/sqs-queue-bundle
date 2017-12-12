@@ -49,6 +49,20 @@ class QueueWorkerCommandTest extends KernelTestCase
     }
 
     /**
+     * Test: start a worker with an invalid value of amount of messages
+     */
+    public function testExecuteWithInvalidAmountMessages()
+    {
+        $commandTester = $this->createCommandTester(new QueueWorkerCommand());
+
+        $this->expectException(\InvalidArgumentException::class);
+        $commandTester->execute([
+            'name' => 'basic_queue',
+            '--messages' => -1
+        ]);
+    }
+
+    /**
      * Test: Start a worker for listening to a queue
      */
     public function testExecute()
