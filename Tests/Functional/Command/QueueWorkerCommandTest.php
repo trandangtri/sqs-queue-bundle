@@ -57,7 +57,7 @@ class QueueWorkerCommandTest extends KernelTestCase
 
         $this->expectException(\InvalidArgumentException::class);
         $commandTester->execute([
-            'name' => 'non-existing-queue',
+            'name' => 'basic_queue',
             '--messages' => -1
         ]);
     }
