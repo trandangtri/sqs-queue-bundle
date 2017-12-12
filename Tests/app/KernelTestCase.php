@@ -3,8 +3,8 @@
 namespace TriTran\SqsQueueBundle\Tests\app;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -54,10 +54,7 @@ class KernelTestCase extends SymfonyKernelTestCase
      */
     public function createCommandTester(ContainerAwareCommand $command)
     {
-        $kernel = static::createKernel();
-        $kernel->boot();
-
-        $application = new Application($kernel);
+        $application = new Application();
         $command->setContainer($this->getContainer());
         $application->add($command);
 
