@@ -24,12 +24,7 @@ class QueueWorkerCommand extends ContainerAwareCommand
     {
         $this
             ->setName('tritran:sqs_queue:worker')
-            ->addArgument(
-                'name',
-                InputArgument::REQUIRED,
-                'Queue Name',
-                null
-            )
+            ->addArgument('name', InputArgument::REQUIRED, 'Queue Name', null)
             ->addOption('messages', 'm', InputOption::VALUE_OPTIONAL, 'Messages to consume', 0)
             ->setDescription('Start a worker that will listen to a specified SQS queue');
     }
