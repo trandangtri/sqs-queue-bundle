@@ -45,6 +45,8 @@ class AppKernel extends Kernel
 }
 ```
 
+> In a default Symfony application that uses [Symfony Flex](https://symfony.com/doc/current/setup/flex.html), bundles are enabled/disabled automatically for you when installing/removing them, so you could ignore this step.
+
 ### Step 3: Update AWS SQS Credential
 
 This bundle is using [AWS SDK for PHP](https://github.com/aws/aws-sdk-php-symfony). Full documentation of the configuration options available can be read in the [SDK Guide](http://docs.aws.amazon.com/aws-sdk-php/v3/guide/guide/configuration.html).
