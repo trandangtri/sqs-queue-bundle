@@ -1,22 +1,54 @@
 <?xml version="1.0" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
         <service id="tritran.sqs_queue.queue_factory" class="TriTran\SqsQueueBundle\Service\QueueFactory">
-            <argument type="service" id="aws.sqs" />
+            <argument type="service" id="aws.sqs"/>
         </service>
 
-        <service id="tritran.sqs_queue.queue_worker" class="TriTran\SqsQueueBundle\Service\BaseWorker">
+        <service id="tritran.sqs_queue.queue_worker" class="TriTran\SqsQueueBundle\Service\BaseWorker" public="true">
             <call method="setLogger">
                 <argument type="service" id="logger" on-invalid="ignore"/>
             </call>
         </service>
 
-        <service id="tritran.sqs_queue.queue_manager" class="TriTran\SqsQueueBundle\Service\QueueManager">
-            <argument type="service" id="aws.sqs" />
+        <service id="tritran.sqs_queue.queue_manager" class="TriTran\SqsQueueBundle\Service\QueueManager" public="true">
+            <argument type="service" id="aws.sqs"/>
+        </service>
+
+        <service id="tritran.sqs_queue.command.queue_attr" class="TriTran\SqsQueueBundle\Command\QueueAttrCommand">
+            <tag name="console.command" command="tritran:sqs_queue:attr"/>
+        </service>
+
+        <service id="tritran.sqs_queue.command.queue_create" class="TriTran\SqsQueueBundle\Command\QueueCreateCommand">
+            <tag name="console.command" command="tritran:sqs_queue:create"/>
+        </service>
+
+        <service id="tritran.sqs_queue.command.queue_delete" class="TriTran\SqsQueueBundle\Command\QueueDeleteCommand">
+            <tag name="console.command" command="tritran:sqs_queue:delete"/>
+        </service>
+
+        <service id="tritran.sqs_queue.command.queue_list" class="TriTran\SqsQueueBundle\Command\QueueListCommand">
+            <tag name="console.command" command="tritran:sqs_queue:list"/>
+        </service>
+
+        <service id="tritran.sqs_queue.command.queue_ping" class="TriTran\SqsQueueBundle\Command\QueuePingCommand">
+            <tag name="console.command" command="tritran:sqs_queue:ping"/>
+        </service>
+
+        <service id="tritran.sqs_queue.command.queue_purge" class="TriTran\SqsQueueBundle\Command\QueuePurgeCommand">
+            <tag name="console.command" command="tritran:sqs_queue:purge"/>
+        </service>
+
+        <service id="tritran.sqs_queue.command.queue_update" class="TriTran\SqsQueueBundle\Command\QueueUpdateCommand">
+            <tag name="console.command" command="tritran:sqs_queue:update"/>
+        </service>
+
+        <service id="tritran.sqs_queue.command.queue_worker" class="TriTran\SqsQueueBundle\Command\QueueWorkerCommand">
+            <tag name="console.command" command="tritran:sqs_queue:worker"/>
         </service>
 
     </services>

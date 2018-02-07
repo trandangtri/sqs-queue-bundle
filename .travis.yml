@@ -3,13 +3,7 @@ language: php
 php:
   - 7.0
   - 7.1
-env:
-  - SYMFONY="2.7.*"
-  - SYMFONY="~3.0"
-services:
-  - elasticsearch
-install:
-  - composer require --no-update symfony/symfony:${SYMFONY}
+  - 7.2
 before_script:
   - composer install --no-interaction --prefer-dist
 script:

@@ -2,6 +2,7 @@
 
 namespace TriTran\SqsQueueBundle\Tests\app;
 
+use AppKernel;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\Console\Application;
@@ -45,6 +46,17 @@ class KernelTestCase extends SymfonyKernelTestCase
         }
 
         return $this->container;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function createKernel(array $options = [])
+    {
+        $kernel = new AppKernel('test', true);
+        $kernel->boot();
+
+        return $kernel;
     }
 
     /**

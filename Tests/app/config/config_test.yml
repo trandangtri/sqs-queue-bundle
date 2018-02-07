@@ -3,9 +3,7 @@ framework:
     secret: 'secret'
     router:
         resource: ~
-        strict_requirements: %kernel.debug%
-    templating:
-        engines: ['twig']
+        strict_requirements: '%kernel.debug%'
     test: ~
 
 aws:
