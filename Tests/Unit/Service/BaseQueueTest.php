@@ -171,7 +171,7 @@ class BaseQueueTest extends TestCase
         $client->expects($this->any())
             ->method('receiveMessage')
             ->with([
-                'AttributeNames' => ['SentTimestamp'],
+                'AttributeNames' => ['All'],
                 'MaxNumberOfMessages' => $limit,
                 'MessageAttributeNames' => ['All'],
                 'QueueUrl' => $queueUrl,
