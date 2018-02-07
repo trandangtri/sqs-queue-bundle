@@ -58,7 +58,9 @@ class SQSQueuePass implements CompilerPassInterface
                             new Reference('tritran.sqs_queue.queue_factory'),
                             'create'
                         ]
-                    )->setArguments([
+                    )
+                    ->setPublic(true)
+                    ->setArguments([
                         $queueName,
                         $queueOption['queue_url'],
                         $callable,

@@ -1,35 +1,46 @@
 {
-  "name": "tritran/sqs-queue-bundle",
-  "description": "Simple SQS Queue for Symfony",
-  "type": "symfony-bundle",
-  "homepage": "http://www.ideason.vn",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Tri D. Tran",
-      "homepage": "http://www.ideason.vn"
-    }
-  ],
-  "require": {
-    "php": ">=5.5",
-    "symfony/symfony": "~2.7|~3.0",
-    "aws/aws-sdk-php-symfony": "~1.0"
-  },
-  "require-dev": {
-    "symfony/monolog-bundle": "~2.5",
-    "symfony/monolog-bridge": "~2.4",
-    "phpunit/phpunit": "6.0.*",
-    "phpmd/phpmd": "2.6.*",
-    "squizlabs/php_codesniffer": "^3.0"
-  },
-  "suggest": {
-  },
-  "autoload": {
-    "psr-4": {
-      "TriTran\\SqsQueueBundle\\": ""
+    "name": "tritran/sqs-queue-bundle",
+    "description": "Simple SQS Queue for Symfony",
+    "type": "symfony-bundle",
+    "homepage": "http://www.ideason.vn",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tri D. Tran",
+            "homepage": "http://www.ideason.vn"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "symfony/dependency-injection": "~2.7|~3.3|~4.0",
+        "symfony/config": "~2.8|~3.3|~4.0",
+        "symfony/console": "~2.7|~3.3|~4.0",
+        "aws/aws-sdk-php-symfony": "~2.0"
     },
-    "exclude-from-classmap": [
-      "/Tests/"
-    ]
-  }
+    "require-dev": {
+        "symfony/framework-bundle": "~2.3|~3.0|~4.0",
+        "symfony/yaml": "~2.3|~3.0|~4.0",
+        "phpunit/phpunit": "6.0.*",
+        "phpmd/phpmd": "2.6.*",
+        "squizlabs/php_codesniffer": "^3.0"
+    },
+    "suggest": {
+    },
+    "autoload": {
+        "psr-4": {
+            "TriTran\\SqsQueueBundle\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/app/cache/",
+            "/Tests/app/logs/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TriTran\\SqsQueueBundle\\": "Tests/"
+        },
+        "classmap": [
+            "Tests/app"
+        ]
+    }
 }

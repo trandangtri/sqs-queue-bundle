@@ -24,7 +24,7 @@
     </testsuites>
 
     <php>
-        <server name="KERNEL_DIR" value="Tests/app/" />
+        <env name="KERNEL_CLASS" value="Tests/app/AppKernel"/>
     </php>
 
     <filter>
