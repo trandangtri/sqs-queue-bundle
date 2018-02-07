@@ -107,7 +107,7 @@ class BaseQueue
 
         try {
             $result = $this->client->receiveMessage([
-                'AttributeNames' => ['SentTimestamp'],
+                'AttributeNames' => ['All'],
                 'MaxNumberOfMessages' => $limit,
                 'MessageAttributeNames' => ['All'],
                 'QueueUrl' => $this->queueUrl,
