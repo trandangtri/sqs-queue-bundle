@@ -38,6 +38,7 @@ class Message
     {
         $this->body = $body;
         $this->attributes = $attributes;
+        $this->id = uniqid('message_');
     }
 
     /**
