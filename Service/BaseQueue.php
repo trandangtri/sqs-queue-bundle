@@ -44,20 +44,20 @@ class BaseQueue
      * @param string $queueName
      * @param string $queueUrl
      * @param AbstractWorker $queueWorker
-     * @param array $options
+     * @param array $attributes
      */
     public function __construct(
         SqsClient $client,
         string $queueName,
         string $queueUrl,
         AbstractWorker $queueWorker,
-        array $options = []
+        array $attributes = []
     ) {
         $this->client = $client;
         $this->queueUrl = $queueUrl;
         $this->queueName = $queueName;
         $this->queueWorker = $queueWorker;
-        $this->attributes = $options;
+        $this->attributes = $attributes;
     }
 
     /**
@@ -79,11 +79,31 @@ class BaseQueue
     public function sendMessage(Message $message, int $delay = 0)
     {
         $params = [
-            'DelaySeconds' => $delay,
-            'MessageAttributes' => $message->getAttributes(),
+            'QueueUrl' => $this->queueUrl,
             'MessageBody' => $message->getBody(),
-            'QueueUrl' => $this->queueUrl
+            'MessageAttributes' => $message->getAttributes()
         ];
+
+        if ($this->isFIFO()) {
+            if ($delay) {
+                trigger_error('FIFO queues don\'t support per-message delays, only per-queue delays.', E_USER_WARNING);
+                $delay = 0;
+            }
+
+            if (empty($message->getGroupId())) {
+                throw new \InvalidArgumentException('MessageGroupId is required for FIFO queues.');
+            }
+            $params['MessageGroupId'] = $message->getGroupId();
+
+            if (!empty($message->getDeduplicationId())) {
+                $params['MessageDeduplicationId'] = $message->getDeduplicationId();
+            }
+        }
+
+        if ($delay) {
+            $params['DelaySeconds'] = $delay;
+        }
+
         try {
             $result = $this->client->sendMessage($params);
             $messageId = $result->get('MessageId');
@@ -107,10 +127,11 @@ class BaseQueue
 
         try {
             $result = $this->client->receiveMessage([
-                'AttributeNames' => ['All'],
-                'MaxNumberOfMessages' => $limit,
-                'MessageAttributeNames' => ['All'],
                 'QueueUrl' => $this->queueUrl,
+                'AttributeNames' => ['All'],
+                'MessageAttributeNames' => ['All'],
+                'MaxNumberOfMessages' => $limit,
+                'VisibilityTimeout' => $this->attributes['VisibilityTimeout'] ?? 30,
                 'WaitTimeSeconds' => $this->attributes['ReceiveMessageWaitTimeSeconds'] ?? 0,
             ]);
 
@@ -255,5 +276,13 @@ class BaseQueue
     public function getClient(): SqsClient
     {
         return $this->client;
+    }
+
+    /**
+     * @return bool
+     */
+    final public function isFIFO(): bool
+    {
+        return '.fifo' === substr($this->getQueueName(), -5);
     }
 }

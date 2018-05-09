@@ -6,6 +6,7 @@ use Aws\Command;
 use Aws\Exception\AwsException;
 use Aws\Result;
 use Aws\Sqs\SqsClient;
+use PHPUnit\Framework\Error as PHPUnitError;
 use PHPUnit\Framework\TestCase;
 use TriTran\SqsQueueBundle\Service\BaseQueue;
 use TriTran\SqsQueueBundle\Service\Message;
@@ -131,6 +132,36 @@ class BaseQueueTest extends TestCase
     }
 
     /**
+     * Test: send message to a FIFO queue
+     */
+    public function testSendMessageToFifoQueue()
+    {
+        $messageBody = 'my-message';
+        $messageAttr = ['x', 'y', 'z'];
+        $queueUrl = 'queue-url';
+        $groupId = 'group-name';
+        $deduplicationId = 'deduplication-id';
+
+        $client = $this->getAwsClient();
+        $client->expects($this->any())
+            ->method('sendMessage')
+            ->with([
+                'MessageAttributes' => $messageAttr,
+                'MessageBody' => $messageBody,
+                'QueueUrl' => $queueUrl,
+                'MessageGroupId' => $groupId,
+                'MessageDeduplicationId' => $deduplicationId,
+            ])
+            ->willReturn($this->getAwsResult(['MessageId' => 'new-message-id']));
+
+        $queue = new BaseQueue($client, 'queue-name.fifo', $queueUrl, new BasicWorker(), []);
+        $this->assertEquals(
+            'new-message-id',
+            $queue->sendMessage(new Message($messageBody, $messageAttr, $groupId, $deduplicationId))
+        );
+    }
+
+    /**
      * Test: send message to a queue in failure
      */
     public function testSendMessageFailure()
@@ -151,13 +182,57 @@ class BaseQueueTest extends TestCase
     }
 
     /**
+     * Test: send message to a FIFO queue
+     */
+    public function testSendMessageToFifoQueueFailure()
+    {
+        $client = $this->getAwsClient();
+        $client->expects($this->any())
+            ->method('sendMessage')
+            ->withAnyParameters()
+            ->willThrowException(new AwsException(
+                'AWS Client Exception',
+                new Command('send-message-command')
+            ));
+
+        $queue = new BaseQueue($client, 'queue-name.fifo', 'queue-url', new BasicWorker(), []);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('MessageGroupId is required for FIFO queues.');
+        $queue->sendMessage(new Message('my-message', [], ''));
+    }
+
+    /**
+     * Test: send message to a FIFO queue
+     */
+    public function testSendMessageToFifoQueueWarning()
+    {
+        $client = $this->getAwsClient();
+        $client->expects($this->any())
+            ->method('sendMessage')
+            ->withAnyParameters()
+            ->willThrowException(new AwsException(
+                'AWS Client Exception',
+                new Command('send-message-command')
+            ));
+
+        $queue = new BaseQueue($client, 'queue-name.fifo', 'queue-url', new BasicWorker(), []);
+
+        $this->expectException(PHPUnitError\Warning::class);
+        $queue->sendMessage(new Message('my-message', [], ''), random_int(0, 10));
+    }
+
+    /**
      * Test: receive Message
      */
     public function testReceiveMessage()
     {
         $limit = random_int(1, 10);
         $queueUrl = 'queue-url';
-        $queueAttr = ['ReceiveMessageWaitTimeSeconds' => random_int(1, 10)];
+        $queueAttr = [
+            'ReceiveMessageWaitTimeSeconds' => random_int(1, 10),
+            'VisibilityTimeout' => random_int(0, 30)
+        ];
         $expected = [
             [
                 'MessageId' => 'my-message-id',
@@ -176,6 +251,7 @@ class BaseQueueTest extends TestCase
                 'MessageAttributeNames' => ['All'],
                 'QueueUrl' => $queueUrl,
                 'WaitTimeSeconds' => $queueAttr['ReceiveMessageWaitTimeSeconds'],
+                'VisibilityTimeout' => $queueAttr['VisibilityTimeout'],
             ])
             ->willReturn($this->getAwsResult(['Messages' => $expected]));
 

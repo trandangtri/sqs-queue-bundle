@@ -34,7 +34,8 @@ class QueueCreateCommandTest extends KernelTestCase
                     'MaximumMessageSize' => 1,
                     'MessageRetentionPeriod' => 1,
                     'ReceiveMessageWaitTimeSeconds' => 1,
-                    'VisibilityTimeout' => 1
+                    'VisibilityTimeout' => 1,
+                    'ContentBasedDeduplication' => true,
                 ])
                 ->willReturn('new-queue-url');
 
@@ -55,6 +56,7 @@ class QueueCreateCommandTest extends KernelTestCase
             '--message_retention_period' => 1,
             '--receive_message_wait_time_seconds' => 1,
             '--visibility_timeout' => 1,
+            '--content_based_deduplication' => true,
         ]);
 
         $output = $commandTester->getDisplay();

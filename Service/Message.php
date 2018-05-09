@@ -26,6 +26,16 @@ class Message
     /**
      * @var string
      */
+    private $groupId;
+
+    /**
+     * @var string
+     */
+    private $deduplicationId;
+
+    /**
+     * @var string
+     */
     private $receiptHandle;
 
     /**
@@ -33,11 +43,19 @@ class Message
      *
      * @param string $body
      * @param array $attributes
+     * @param string $groupId
+     * @param string $deduplicationId
      */
-    public function __construct(string $body = '', array $attributes = [])
-    {
+    public function __construct(
+        string $body = '',
+        array $attributes = [],
+        string $groupId = '',
+        string $deduplicationId = ''
+    ) {
         $this->body = $body;
         $this->attributes = $attributes;
+        $this->groupId = $groupId;
+        $this->deduplicationId = $deduplicationId;
     }
 
     /**
@@ -51,7 +69,7 @@ class Message
     /**
      * @param string $id
      *
-     * @return $this
+     * @return Message
      */
     public function setId(string $id)
     {
@@ -71,7 +89,7 @@ class Message
     /**
      * @param string $body
      *
-     * @return $this
+     * @return Message
      */
     public function setBody(string $body)
     {
@@ -91,11 +109,51 @@ class Message
     /**
      * @param array $attributes
      *
-     * @return $this
+     * @return Message
      */
     public function setAttributes(array $attributes)
     {
         $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroupId(): string
+    {
+        return $this->groupId;
+    }
+
+    /**
+     * @param string $groupId
+     *
+     * @return Message
+     */
+    public function setGroupId(string $groupId)
+    {
+        $this->groupId = $groupId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeduplicationId(): string
+    {
+        return $this->deduplicationId;
+    }
+
+    /**
+     * @param string $deduplicationId
+     *
+     * @return Message
+     */
+    public function setDeduplicationId(string $deduplicationId)
+    {
+        $this->deduplicationId = $deduplicationId;
 
         return $this;
     }
@@ -111,7 +169,7 @@ class Message
     /**
      * @param string $receiptHandle
      *
-     * @return $this
+     * @return Message
      */
     public function setReceiptHandle(string $receiptHandle)
     {
