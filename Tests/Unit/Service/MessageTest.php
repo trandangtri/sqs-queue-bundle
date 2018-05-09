@@ -18,11 +18,15 @@ class MessageTest extends TestCase
     {
         $body = 'my-body';
         $attributes = ['a', 'b', 'c'];
-        $message = new Message($body, $attributes);
+        $groupId = 'group-id';
+        $deduplicationID = 'deduplication-id';
+        $message = new Message($body, $attributes, $groupId, $deduplicationID);
 
         $this->assertInstanceOf(Message::class, $message);
         $this->assertEquals($body, $message->getBody());
         $this->assertEquals($attributes, $message->getAttributes());
+        $this->assertEquals($groupId, $message->getGroupId());
+        $this->assertEquals($deduplicationID, $message->getDeduplicationId());
     }
 
     /**
@@ -30,7 +34,7 @@ class MessageTest extends TestCase
      */
     public function testGetterSetter()
     {
-        $message = new Message('', []);
+        $message = new Message('', [], '', '');
 
         $this->assertInstanceOf(Message::class, $message->setId('my-id'));
         $this->assertEquals('my-id', $message->getId());
@@ -40,5 +44,9 @@ class MessageTest extends TestCase
         $this->assertEquals(['a', 'b', 'c'], $message->getAttributes());
         $this->assertInstanceOf(Message::class, $message->setReceiptHandle('my-receipt'));
         $this->assertEquals('my-receipt', $message->getReceiptHandle());
+        $this->assertInstanceOf(Message::class, $message->setGroupId('group-id'));
+        $this->assertEquals('group-id', $message->getGroupId());
+        $this->assertInstanceOf(Message::class, $message->setDeduplicationId('deduplication-id'));
+        $this->assertEquals('deduplication-id', $message->getDeduplicationId());
     }
 }
