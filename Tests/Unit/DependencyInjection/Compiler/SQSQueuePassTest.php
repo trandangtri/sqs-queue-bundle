@@ -109,7 +109,8 @@ class SQSQueuePassTest extends TestCase
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 20,
                             'VisibilityTimeout' => 30,
-                            'RedrivePolicy' => ''
+                            'RedrivePolicy' => '',
+                            'ContentBasedDeduplication' => false
                         ]
                     ]
                 ]
@@ -130,7 +131,8 @@ class SQSQueuePassTest extends TestCase
                             'redrive_policy' => [
                                 'dead_letter_queue' => 'basic_dead_letter_queue_1',
                                 'max_receive_count' => 1
-                            ]
+                            ],
+                            'content_based_deduplication' => true
                         ]
                     ]
                 ],
@@ -147,7 +149,8 @@ class SQSQueuePassTest extends TestCase
                             'RedrivePolicy' => json_encode([
                                 'deadLetterTargetArn' => 'basic_dead_letter_queue_1',
                                 'maxReceiveCount' => 1
-                            ])
+                            ]),
+                            'ContentBasedDeduplication' => true
                         ]
                     ]
                 ]
@@ -168,7 +171,8 @@ class SQSQueuePassTest extends TestCase
                             'redrive_policy' => [
                                 'dead_letter_queue' => 'basic_dead_letter_queue_2',
                                 'max_receive_count' => 2
-                            ]
+                            ],
+                            'content_based_deduplication' => true
                         ]
                     ]
                 ],
@@ -185,7 +189,8 @@ class SQSQueuePassTest extends TestCase
                             'RedrivePolicy' => json_encode([
                                 'deadLetterTargetArn' => 'basic_dead_letter_queue_2',
                                 'maxReceiveCount' => 2
-                            ])
+                            ]),
+                            'ContentBasedDeduplication' => true
                         ]
                     ]
                 ]
@@ -207,7 +212,8 @@ class SQSQueuePassTest extends TestCase
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 20,
                             'VisibilityTimeout' => 30,
-                            'RedrivePolicy' => ''
+                            'RedrivePolicy' => '',
+                            'ContentBasedDeduplication' => false
                         ]
                     ],
                     'basic-queue-2' => [
@@ -219,7 +225,8 @@ class SQSQueuePassTest extends TestCase
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 20,
                             'VisibilityTimeout' => 30,
-                            'RedrivePolicy' => ''
+                            'RedrivePolicy' => '',
+                            'ContentBasedDeduplication' => false
                         ]
                     ]
                 ]

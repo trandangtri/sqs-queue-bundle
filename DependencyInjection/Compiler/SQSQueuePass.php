@@ -81,7 +81,9 @@ class SQSQueuePass implements CompilerPassInterface
                                         $queueOption['attributes']['redrive_policy']['dead_letter_queue'] ?? '',
                                     'maxReceiveCount' =>
                                         $queueOption['attributes']['redrive_policy']['max_receive_count'] ?? 5,
-                                ]) : ''
+                                ]) : '',
+                            'ContentBasedDeduplication' =>
+                                $queueOption['attributes']['content_based_deduplication'] ?? false
                         ]
                     ]);
 

@@ -25,7 +25,8 @@ class QueueManager
         'MessageRetentionPeriod' => 345600, // 4 days
         'ReceiveMessageWaitTimeSeconds' => 0,
         'VisibilityTimeout' => 30,
-        'RedrivePolicy' => ''
+        'RedrivePolicy' => '',
+        'ContentBasedDeduplication' => false
     ];
 
     /**
