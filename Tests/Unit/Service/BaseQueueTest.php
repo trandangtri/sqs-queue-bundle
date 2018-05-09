@@ -157,7 +157,10 @@ class BaseQueueTest extends TestCase
     {
         $limit = random_int(1, 10);
         $queueUrl = 'queue-url';
-        $queueAttr = ['ReceiveMessageWaitTimeSeconds' => random_int(1, 10)];
+        $queueAttr = [
+            'ReceiveMessageWaitTimeSeconds' => random_int(1, 10),
+            'VisibilityTimeout' => random_int(0, 30)
+        ];
         $expected = [
             [
                 'MessageId' => 'my-message-id',
@@ -176,6 +179,7 @@ class BaseQueueTest extends TestCase
                 'MessageAttributeNames' => ['All'],
                 'QueueUrl' => $queueUrl,
                 'WaitTimeSeconds' => $queueAttr['ReceiveMessageWaitTimeSeconds'],
+                'VisibilityTimeout' => $queueAttr['VisibilityTimeout'],
             ])
             ->willReturn($this->getAwsResult(['Messages' => $expected]));
 

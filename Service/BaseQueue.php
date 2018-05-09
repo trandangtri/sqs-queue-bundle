@@ -79,10 +79,10 @@ class BaseQueue
     public function sendMessage(Message $message, int $delay = 0)
     {
         $params = [
-            'DelaySeconds' => $delay,
-            'MessageAttributes' => $message->getAttributes(),
+            'QueueUrl' => $this->queueUrl,
             'MessageBody' => $message->getBody(),
-            'QueueUrl' => $this->queueUrl
+            'DelaySeconds' => $delay,
+            'MessageAttributes' => $message->getAttributes()
         ];
         try {
             $result = $this->client->sendMessage($params);
@@ -107,10 +107,11 @@ class BaseQueue
 
         try {
             $result = $this->client->receiveMessage([
-                'AttributeNames' => ['All'],
-                'MaxNumberOfMessages' => $limit,
-                'MessageAttributeNames' => ['All'],
                 'QueueUrl' => $this->queueUrl,
+                'AttributeNames' => ['All'],
+                'MessageAttributeNames' => ['All'],
+                'MaxNumberOfMessages' => $limit,
+                'VisibilityTimeout' => $this->attributes['VisibilityTimeout'] ?? 30,
                 'WaitTimeSeconds' => $this->attributes['ReceiveMessageWaitTimeSeconds'] ?? 0,
             ]);
 
