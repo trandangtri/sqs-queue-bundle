@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use TriTran\SqsQueueBundle\Service\QueueManager;
-
 /**
  * Class QueueDeleteCommand
  * @package TriTran\SqsQueueBundle\Command
@@ -48,15 +47,11 @@ class QueueDeleteCommand extends ContainerAwareCommand
             $io->warning('This action should not be used in the production environment.');
             return;
         }
-
         $queueUrl = $input->getArgument('url');
-
         $io->title(sprintf('Start deleting the specified queue by URL <comment>%s</comment>', $queueUrl));
-
         /** @var QueueManager $queueManager */
         $queueManager = $this->getContainer()->get('tritran.sqs_queue.queue_manager');
         $queueManager->deleteQueue($queueUrl);
-
         $io->text('Deleted successfully');
         $io->success('Done');
     }

@@ -20,15 +20,13 @@ class TriTranSqsQueueExtensionTest extends TestCase
         $extension = new TriTranSqsQueueExtension();
         $this->assertEquals('tritran_sqs_queue', $extension->getAlias());
     }
-
     /**
      * @return ContainerBuilder
      */
-    protected function getContainer(): ContainerBuilder
+    protected function getContainer()
     {
         return new ContainerBuilder();
     }
-
     /**
      * Make sure the extension loaded all pre-defined services successfully
      */
@@ -50,17 +48,7 @@ class TriTranSqsQueueExtensionTest extends TestCase
     {
         $container = $this->getContainer();
         $extension = new TriTranSqsQueueExtension();
-        $extension->load([
-            'tritran_sqs_queue' => [
-                'sqs_queue' => [
-                    'queues' => [
-                        ['name' => 'queue-1', 'queue_url' => 'url-1', 'worker' => 'worker-1'],
-                        ['name' => 'queue-2', 'queue_url' => 'url-2', 'worker' => 'worker-2'],
-                    ]
-                ]
-            ]
-        ], $container);
-
+        $extension->load(['tritran_sqs_queue' => ['sqs_queue' => ['queues' => [['name' => 'queue-1', 'queue_url' => 'url-1', 'worker' => 'worker-1'], ['name' => 'queue-2', 'queue_url' => 'url-2', 'worker' => 'worker-2']]]]], $container);
         $this->assertTrue($container->hasParameter('tritran.sqs_queue.queues'));
     }
 }

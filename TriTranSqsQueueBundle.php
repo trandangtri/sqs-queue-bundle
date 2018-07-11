@@ -19,10 +19,8 @@ class TriTranSqsQueueBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
-
         $container->addCompilerPass(new SQSQueuePass());
     }
-
     /**
      * @inheritdoc
      */
@@ -31,7 +29,6 @@ class TriTranSqsQueueBundle extends Bundle
         if (null === $this->extension) {
             $this->extension = new TriTranSqsQueueExtension();
         }
-
         return $this->extension;
     }
 }

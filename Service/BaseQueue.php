@@ -16,27 +16,22 @@ class BaseQueue
      * @var SqsClient
      */
     private $client;
-
     /**
      * @var string
      */
     private $queueUrl;
-
     /**
      * @var string
      */
     private $queueName;
-
     /**
      * @var AbstractWorker
      */
     private $queueWorker;
-
     /**
      * @var array
      */
     private $attributes;
-
     /**
      * BaseQueue constructor.
      *
@@ -46,74 +41,55 @@ class BaseQueue
      * @param AbstractWorker $queueWorker
      * @param array $attributes
      */
-    public function __construct(
-        SqsClient $client,
-        string $queueName,
-        string $queueUrl,
-        AbstractWorker $queueWorker,
-        array $attributes = []
-    ) {
+    public function __construct(SqsClient $client, $queueName, $queueUrl, AbstractWorker $queueWorker, array $attributes = [])
+    {
         $this->client = $client;
         $this->queueUrl = $queueUrl;
         $this->queueName = $queueName;
         $this->queueWorker = $queueWorker;
         $this->attributes = $attributes;
     }
-
     /**
      * @return string
      */
     public function ping()
     {
         $message = (new Message())->setBody('ping');
-
         return $this->sendMessage($message);
     }
-
     /**
      * @param Message $message
      * @param int $delay
      *
      * @return string
      */
-    public function sendMessage(Message $message, int $delay = 0)
+    public function sendMessage(Message $message, $delay = 0)
     {
-        $params = [
-            'QueueUrl' => $this->queueUrl,
-            'MessageBody' => $message->getBody(),
-            'MessageAttributes' => $message->getAttributes()
-        ];
-
+        $params = ['QueueUrl' => $this->queueUrl, 'MessageBody' => $message->getBody(), 'MessageAttributes' => $message->getAttributes()];
         if ($this->isFIFO()) {
             if ($delay) {
                 trigger_error('FIFO queues don\'t support per-message delays, only per-queue delays.', E_USER_WARNING);
                 $delay = 0;
             }
-
             if (empty($message->getGroupId())) {
                 throw new \InvalidArgumentException('MessageGroupId is required for FIFO queues.');
             }
             $params['MessageGroupId'] = $message->getGroupId();
-
             if (!empty($message->getDeduplicationId())) {
                 $params['MessageDeduplicationId'] = $message->getDeduplicationId();
             }
         }
-
         if ($delay) {
             $params['DelaySeconds'] = $delay;
         }
-
         try {
             $result = $this->client->sendMessage($params);
             $messageId = $result->get('MessageId');
         } catch (AwsException $e) {
             throw new \InvalidArgumentException($e->getAwsErrorMessage());
         }
-
         return $messageId;
     }
-
     /**
      * Retrieves one or more messages (up to 10), from the specified queue.
      *
@@ -121,37 +97,26 @@ class BaseQueue
      *
      * @return MessageCollection|Message[]
      */
-    public function receiveMessage(int $limit = 1)
+    public function receiveMessage($limit = 1)
     {
         $collection = new MessageCollection([]);
-
         try {
-            $result = $this->client->receiveMessage([
-                'QueueUrl' => $this->queueUrl,
-                'AttributeNames' => ['All'],
-                'MessageAttributeNames' => ['All'],
-                'MaxNumberOfMessages' => $limit,
-                'VisibilityTimeout' => $this->attributes['VisibilityTimeout'] ?? 30,
-                'WaitTimeSeconds' => $this->attributes['ReceiveMessageWaitTimeSeconds'] ?? 0,
-            ]);
-
-            $messages = $result->get('Messages') ?? [];
+            $result = $this->client->receiveMessage(['QueueUrl' => $this->queueUrl, 'AttributeNames' => ['All'], 'MessageAttributeNames' => ['All'], 'MaxNumberOfMessages' => $limit, 'VisibilityTimeout' => call_user_func(function ($v1, $v2) {
+                return isset($v1) ? $v1 : $v2;
+            }, @$this->attributes['VisibilityTimeout'], @30), 'WaitTimeSeconds' => call_user_func(function ($v1, $v2) {
+                return isset($v1) ? $v1 : $v2;
+            }, @$this->attributes['ReceiveMessageWaitTimeSeconds'], @0)]);
+            $messages = call_user_func(function ($v1, $v2) {
+                return isset($v1) ? $v1 : $v2;
+            }, @$result->get('Messages'), @[]);
             foreach ($messages as $message) {
-                $collection->append(
-                    (new Message())
-                        ->setId($message['MessageId'])
-                        ->setBody($message['Body'])
-                        ->setReceiptHandle($message['ReceiptHandle'])
-                        ->setAttributes($message['Attributes'])
-                );
+                $collection->append((new Message())->setId($message['MessageId'])->setBody($message['Body'])->setReceiptHandle($message['ReceiptHandle'])->setAttributes($message['Attributes']));
             }
         } catch (AwsException $e) {
             throw new \InvalidArgumentException($e->getAwsErrorMessage());
         }
-
         return $collection;
     }
-
     /**
      * Deletes the specified message from the specified queue
      *
@@ -204,60 +169,50 @@ class BaseQueue
     public function purge()
     {
         try {
-            $this->client->purgeQueue([
-                'QueueUrl' => $this->queueUrl
-            ]);
-
+            $this->client->purgeQueue(['QueueUrl' => $this->queueUrl]);
             return true;
         } catch (AwsException $e) {
             throw new \InvalidArgumentException($e->getAwsErrorMessage());
         }
     }
-
     /**
      * @return string
      */
-    public function getQueueUrl(): string
+    public function getQueueUrl()
     {
         return $this->queueUrl;
     }
-
     /**
      * @param string $queueUrl
      *
      * @return $this
      */
-    public function setQueueUrl(string $queueUrl)
+    public function setQueueUrl($queueUrl)
     {
         $this->queueUrl = $queueUrl;
-
         return $this;
     }
-
     /**
      * @return AbstractWorker
      */
-    public function getQueueWorker(): AbstractWorker
+    public function getQueueWorker()
     {
         return $this->queueWorker;
     }
-
     /**
      * @return string
      */
-    public function getQueueName(): string
+    public function getQueueName()
     {
         return $this->queueName;
     }
-
     /**
      * @return array
      */
-    public function getAttributes(): array
+    public function getAttributes()
     {
         return $this->attributes;
     }
-
     /**
      * @param array $attributes
      *
@@ -266,22 +221,19 @@ class BaseQueue
     public function setAttributes(array $attributes)
     {
         $this->attributes = $attributes;
-
         return $this;
     }
-
     /**
      * @return SqsClient
      */
-    public function getClient(): SqsClient
+    public function getClient()
     {
         return $this->client;
     }
-
     /**
      * @return bool
      */
-    final public function isFIFO(): bool
+    public final function isFIFO()
     {
         return '.fifo' === substr($this->getQueueName(), -5);
     }

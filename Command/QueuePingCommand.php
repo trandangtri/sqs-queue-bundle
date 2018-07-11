@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use TriTran\SqsQueueBundle\Service\BaseQueue;
-
 /**
  * Class QueuePingCommand
  * @package TriTran\SqsQueueBundle\Command
@@ -39,14 +38,11 @@ class QueuePingCommand extends ContainerAwareCommand
         if (!$this->getContainer()->has(sprintf('tritran.sqs_queue.%s', $queueName))) {
             throw new \InvalidArgumentException(sprintf('Queue [%s] does not exist.', $queueName));
         }
-
         $io = new SymfonyStyle($input, $output);
         $io->title(sprintf('Start sending a Hello message to SQS <comment>%s</comment>', $queueName));
-
         /** @var BaseQueue $queue */
         $queue = $this->getContainer()->get(sprintf('tritran.sqs_queue.%s', $queueName));
         $messageId = $queue->ping();
-
         $io->text(sprintf('Sent successfully. MessageID: <comment>%s</comment>', $messageId));
         $io->success('Done');
     }
