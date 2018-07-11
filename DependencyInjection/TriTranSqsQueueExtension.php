@@ -23,23 +23,21 @@ class TriTranSqsQueueExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
-
         $this->configSQSQueue($container, $config);
     }
-
     /**
      * @param ContainerBuilder $container
      * @param array $config
      */
     private function configSQSQueue(ContainerBuilder $container, array $config)
     {
-        $engineConfig = $config['sqs_queue'] ?? [];
-
+        $engineConfig = call_user_func(function ($v1, $v2) {
+            return isset($v1) ? $v1 : $v2;
+        }, @$config['sqs_queue'], @[]);
         if (isset($engineConfig['queues']) && !empty($engineConfig['queues'])) {
             $container->setParameter('tritran.sqs_queue.queues', $config['sqs_queue']['queues']);
         }
     }
-
     /**
      * @inheritdoc
      */

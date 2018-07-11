@@ -16,62 +16,42 @@ class QueueWorkerCommandTest extends KernelTestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|BaseWorker
      */
     private $baseWorker;
-
     /**
      * @inheritdoc
      */
     public function setUp()
     {
         if ($this->baseWorker === null) {
-            $this->baseWorker = $this->getMockBuilder(BaseWorker::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-            $this->baseWorker
-                ->expects($this->any())
-                ->method('start')
-                ->willReturn(true);
-
+            $this->baseWorker = $this->getMockBuilder(BaseWorker::class)->disableOriginalConstructor()->getMock();
+            $this->baseWorker->expects($this->any())->method('start')->willReturn(true);
             $this->getContainer()->set('tritran.sqs_queue.queue_worker', $this->baseWorker);
         }
     }
-
     /**
      * Test: start a worker for a non-existing queue
      */
     public function testExecuteWithNonExistingQueue()
     {
         $commandTester = $this->createCommandTester(new QueueWorkerCommand());
-
         $this->expectException(\InvalidArgumentException::class);
-        $commandTester->execute([
-            'name' => 'non-existing-queue'
-        ]);
+        $commandTester->execute(['name' => 'non-existing-queue']);
     }
-
     /**
      * Test: start a worker with an invalid value of amount of messages
      */
     public function testExecuteWithInvalidAmountMessages()
     {
         $commandTester = $this->createCommandTester(new QueueWorkerCommand());
-
         $this->expectException(\InvalidArgumentException::class);
-        $commandTester->execute([
-            'name' => 'basic_queue',
-            '--messages' => -1
-        ]);
+        $commandTester->execute(['name' => 'basic_queue', '--messages' => -1]);
     }
-
     /**
      * Test: Start a worker for listening to a queue
      */
     public function testExecute()
     {
         $commandTester = $this->createCommandTester(new QueueWorkerCommand());
-        $commandTester->execute([
-            'name' => 'basic_queue'
-        ]);
-
+        $commandTester->execute(['name' => 'basic_queue']);
         $output = $commandTester->getDisplay();
         $this->assertContains('Start listening to queue', $output);
     }

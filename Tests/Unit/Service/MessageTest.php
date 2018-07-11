@@ -21,21 +21,18 @@ class MessageTest extends TestCase
         $groupId = 'group-id';
         $deduplicationID = 'deduplication-id';
         $message = new Message($body, $attributes, $groupId, $deduplicationID);
-
         $this->assertInstanceOf(Message::class, $message);
         $this->assertEquals($body, $message->getBody());
         $this->assertEquals($attributes, $message->getAttributes());
         $this->assertEquals($groupId, $message->getGroupId());
         $this->assertEquals($deduplicationID, $message->getDeduplicationId());
     }
-
     /**
      * Test: Getter/Setter
      */
     public function testGetterSetter()
     {
         $message = new Message('', [], '', '');
-
         $this->assertInstanceOf(Message::class, $message->setId('my-id'));
         $this->assertEquals('my-id', $message->getId());
         $this->assertInstanceOf(Message::class, $message->setBody('my-body'));

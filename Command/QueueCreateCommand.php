@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use TriTran\SqsQueueBundle\Service\QueueManager;
-
 /**
  * Class QueueCreateCommand
  * @package TriTran\SqsQueueBundle\Command
@@ -81,21 +80,11 @@ class QueueCreateCommand extends ContainerAwareCommand
         if ($this->getContainer()->has(sprintf('tritran.sqs_queue.%s', $queueName))) {
             throw new \InvalidArgumentException(sprintf('Queue [%s] exists. Please use another name.', $queueName));
         }
-
         $io = new SymfonyStyle($input, $output);
         $io->title(sprintf('Start creating a new queue which name is <comment>%s</comment>', $queueName));
-
         /** @var QueueManager $queueManager */
         $queueManager = $this->getContainer()->get('tritran.sqs_queue.queue_manager');
-        $queueUrl = $queueManager->createQueue($queueName, [
-            'DelaySeconds' => $input->getOption('delay_seconds'),
-            'MaximumMessageSize' => $input->getOption('maximum_message_size'),
-            'MessageRetentionPeriod' => $input->getOption('message_retention_period'),
-            'ReceiveMessageWaitTimeSeconds' => $input->getOption('receive_message_wait_time_seconds'),
-            'VisibilityTimeout' => $input->getOption('visibility_timeout'),
-            'ContentBasedDeduplication' => $input->getOption('content_based_deduplication')
-        ]);
-
+        $queueUrl = $queueManager->createQueue($queueName, ['DelaySeconds' => $input->getOption('delay_seconds'), 'MaximumMessageSize' => $input->getOption('maximum_message_size'), 'MessageRetentionPeriod' => $input->getOption('message_retention_period'), 'ReceiveMessageWaitTimeSeconds' => $input->getOption('receive_message_wait_time_seconds'), 'VisibilityTimeout' => $input->getOption('visibility_timeout'), 'ContentBasedDeduplication' => $input->getOption('content_based_deduplication')]);
         $io->text(sprintf('Created successfully. New Queue URL: <comment>%s</comment>', $queueUrl));
         $io->success('Done');
     }

@@ -12,7 +12,6 @@ use TriTran\SqsQueueBundle\Service\BaseQueue;
 use TriTran\SqsQueueBundle\Service\Message;
 use TriTran\SqsQueueBundle\Service\MessageCollection;
 use TriTran\SqsQueueBundle\Tests\app\Worker\BasicWorker;
-
 /**
  * Class BaseQueueTest
  * @package TriTran\SqsQueueBundle\Tests\Unit\Service
@@ -28,30 +27,22 @@ class BaseQueueTest extends TestCase
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Result $result */
         $result = $this->getMockBuilder(Result::class)->getMock();
-        $result->expects($this->any())
-            ->method('get')
-            ->withAnyParameters()
-            ->willReturnCallback(function ($arg) use ($entries) {
-                return $entries[$arg] ?? [];
-            });
-
+        $result->expects($this->any())->method('get')->withAnyParameters()->willReturnCallback(function ($arg) use($entries) {
+            return call_user_func(function ($v1, $v2) {
+                return isset($v1) ? $v1 : $v2;
+            }, @$entries[$arg], @[]);
+        });
         return $result;
     }
-
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|SqsClient
      */
     private function getAwsClient()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|SqsClient $client */
-        $client = $this->getMockBuilder(SqsClient::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['sendMessage', 'receiveMessage', 'deleteMessage', 'changeMessageVisibility', 'purgeQueue'])
-            ->getMock();
-
+        $client = $this->getMockBuilder(SqsClient::class)->disableOriginalConstructor()->setMethods(['sendMessage', 'receiveMessage', 'deleteMessage', 'changeMessageVisibility', 'purgeQueue'])->getMock();
         return $client;
     }
-
     /**
      * @return BaseQueue
      */
@@ -62,10 +53,8 @@ class BaseQueueTest extends TestCase
         $queueUrl = 'queue-url';
         $queueWorker = new BasicWorker();
         $queueAttr = ['a', 'b', 'c', 'd'];
-
         return new BaseQueue($client, $queueName, $queueUrl, $queueWorker, $queueAttr);
     }
-
     /**
      * Test: Construction
      */
@@ -77,7 +66,6 @@ class BaseQueueTest extends TestCase
         $queueWorker = new BasicWorker();
         $queueAttr = ['a', 'b', 'c', 'd'];
         $queue = new BaseQueue($client, $queueName, $queueUrl, $queueWorker, $queueAttr);
-
         $this->assertInstanceOf(BaseQueue::class, $queue);
         $this->assertEquals($client, $queue->getClient());
         $this->assertEquals($queueName, $queue->getQueueName());
@@ -85,7 +73,6 @@ class BaseQueueTest extends TestCase
         $this->assertEquals($queueWorker, $queue->getQueueWorker());
         $this->assertEquals($queueAttr, $queue->getAttributes());
     }
-
     /**
      * Test: Getter/Setter
      */
@@ -94,15 +81,12 @@ class BaseQueueTest extends TestCase
         $client = $this->getAwsClient();
         $queueUrl = 'queue-url';
         $queueAttr = ['a', 'b', 'c', 'd'];
-
         $queue = new BaseQueue($client, '', '', new BasicWorker(), []);
-
         $this->assertInstanceOf(BaseQueue::class, $queue->setQueueUrl($queueUrl));
         $this->assertEquals($queueUrl, $queue->getQueueUrl());
         $this->assertInstanceOf(BaseQueue::class, $queue->setAttributes($queueAttr));
         $this->assertEquals($queueAttr, $queue->getAttributes());
     }
-
     /**
      * Test: send message to a queue
      */
@@ -112,25 +96,11 @@ class BaseQueueTest extends TestCase
         $messageBody = 'my-message';
         $messageAttr = ['x', 'y', 'z'];
         $queueUrl = 'queue-url';
-
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('sendMessage')
-            ->with([
-                'DelaySeconds' => $delay,
-                'MessageAttributes' => $messageAttr,
-                'MessageBody' => $messageBody,
-                'QueueUrl' => $queueUrl
-            ])
-            ->willReturn($this->getAwsResult(['MessageId' => 'new-message-id']));
-
+        $client->expects($this->any())->method('sendMessage')->with(['DelaySeconds' => $delay, 'MessageAttributes' => $messageAttr, 'MessageBody' => $messageBody, 'QueueUrl' => $queueUrl])->willReturn($this->getAwsResult(['MessageId' => 'new-message-id']));
         $queue = new BaseQueue($client, 'queue-name', $queueUrl, new BasicWorker(), []);
-        $this->assertEquals(
-            'new-message-id',
-            $queue->sendMessage(new Message($messageBody, $messageAttr), $delay)
-        );
+        $this->assertEquals('new-message-id', $queue->sendMessage(new Message($messageBody, $messageAttr), $delay));
     }
-
     /**
      * Test: send message to a FIFO queue
      */
@@ -141,87 +111,45 @@ class BaseQueueTest extends TestCase
         $queueUrl = 'queue-url';
         $groupId = 'group-name';
         $deduplicationId = 'deduplication-id';
-
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('sendMessage')
-            ->with([
-                'MessageAttributes' => $messageAttr,
-                'MessageBody' => $messageBody,
-                'QueueUrl' => $queueUrl,
-                'MessageGroupId' => $groupId,
-                'MessageDeduplicationId' => $deduplicationId,
-            ])
-            ->willReturn($this->getAwsResult(['MessageId' => 'new-message-id']));
-
+        $client->expects($this->any())->method('sendMessage')->with(['MessageAttributes' => $messageAttr, 'MessageBody' => $messageBody, 'QueueUrl' => $queueUrl, 'MessageGroupId' => $groupId, 'MessageDeduplicationId' => $deduplicationId])->willReturn($this->getAwsResult(['MessageId' => 'new-message-id']));
         $queue = new BaseQueue($client, 'queue-name.fifo', $queueUrl, new BasicWorker(), []);
-        $this->assertEquals(
-            'new-message-id',
-            $queue->sendMessage(new Message($messageBody, $messageAttr, $groupId, $deduplicationId))
-        );
+        $this->assertEquals('new-message-id', $queue->sendMessage(new Message($messageBody, $messageAttr, $groupId, $deduplicationId)));
     }
-
     /**
      * Test: send message to a queue in failure
      */
     public function testSendMessageFailure()
     {
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('sendMessage')
-            ->withAnyParameters()
-            ->willThrowException(new AwsException(
-                'AWS Client Exception',
-                new Command('send-message-command')
-            ));
-
+        $client->expects($this->any())->method('sendMessage')->withAnyParameters()->willThrowException(new AwsException('AWS Client Exception', new Command('send-message-command')));
         $queue = new BaseQueue($client, 'bad-queue-name', 'bad-queue-url', new BasicWorker(), []);
-
         $this->expectException(\InvalidArgumentException::class);
         $queue->sendMessage(new Message('my-message', []));
     }
-
     /**
      * Test: send message to a FIFO queue
      */
     public function testSendMessageToFifoQueueFailure()
     {
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('sendMessage')
-            ->withAnyParameters()
-            ->willThrowException(new AwsException(
-                'AWS Client Exception',
-                new Command('send-message-command')
-            ));
-
+        $client->expects($this->any())->method('sendMessage')->withAnyParameters()->willThrowException(new AwsException('AWS Client Exception', new Command('send-message-command')));
         $queue = new BaseQueue($client, 'queue-name.fifo', 'queue-url', new BasicWorker(), []);
-
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('MessageGroupId is required for FIFO queues.');
         $queue->sendMessage(new Message('my-message', [], ''));
     }
-
     /**
      * Test: send message to a FIFO queue
      */
     public function testSendMessageToFifoQueueWarning()
     {
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('sendMessage')
-            ->withAnyParameters()
-            ->willThrowException(new AwsException(
-                'AWS Client Exception',
-                new Command('send-message-command')
-            ));
-
+        $client->expects($this->any())->method('sendMessage')->withAnyParameters()->willThrowException(new AwsException('AWS Client Exception', new Command('send-message-command')));
         $queue = new BaseQueue($client, 'queue-name.fifo', 'queue-url', new BasicWorker(), []);
-
         $this->expectException(PHPUnitError\Warning::class);
         $queue->sendMessage(new Message('my-message', [], ''), random_int(0, 10));
     }
-
     /**
      * Test: receive Message
      */
@@ -229,38 +157,15 @@ class BaseQueueTest extends TestCase
     {
         $limit = random_int(1, 10);
         $queueUrl = 'queue-url';
-        $queueAttr = [
-            'ReceiveMessageWaitTimeSeconds' => random_int(1, 10),
-            'VisibilityTimeout' => random_int(0, 30)
-        ];
-        $expected = [
-            [
-                'MessageId' => 'my-message-id',
-                'Body' => 'my-body',
-                'ReceiptHandle' => 'receipt-handle',
-                'Attributes' => [],
-            ]
-        ];
-
+        $queueAttr = ['ReceiveMessageWaitTimeSeconds' => random_int(1, 10), 'VisibilityTimeout' => random_int(0, 30)];
+        $expected = [['MessageId' => 'my-message-id', 'Body' => 'my-body', 'ReceiptHandle' => 'receipt-handle', 'Attributes' => []]];
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('receiveMessage')
-            ->with([
-                'AttributeNames' => ['All'],
-                'MaxNumberOfMessages' => $limit,
-                'MessageAttributeNames' => ['All'],
-                'QueueUrl' => $queueUrl,
-                'WaitTimeSeconds' => $queueAttr['ReceiveMessageWaitTimeSeconds'],
-                'VisibilityTimeout' => $queueAttr['VisibilityTimeout'],
-            ])
-            ->willReturn($this->getAwsResult(['Messages' => $expected]));
-
+        $client->expects($this->any())->method('receiveMessage')->with(['AttributeNames' => ['All'], 'MaxNumberOfMessages' => $limit, 'MessageAttributeNames' => ['All'], 'QueueUrl' => $queueUrl, 'WaitTimeSeconds' => $queueAttr['ReceiveMessageWaitTimeSeconds'], 'VisibilityTimeout' => $queueAttr['VisibilityTimeout']])->willReturn($this->getAwsResult(['Messages' => $expected]));
         $queue = new BaseQueue($client, 'queue-name', $queueUrl, new BasicWorker(), $queueAttr);
         $result = $queue->receiveMessage($limit);
         $this->assertInstanceOf(MessageCollection::class, $result);
         $this->assertEquals($this->arrayMessageToCollection($expected), $result);
     }
-
     /**
      * @param array $messages
      *
@@ -270,37 +175,21 @@ class BaseQueueTest extends TestCase
     {
         $collection = new MessageCollection([]);
         foreach ($messages as $message) {
-            $collection->append(
-                (new Message())
-                    ->setId($message['MessageId'])
-                    ->setBody($message['Body'])
-                    ->setReceiptHandle($message['ReceiptHandle'])
-                    ->setAttributes($message['Attributes'])
-            );
+            $collection->append((new Message())->setId($message['MessageId'])->setBody($message['Body'])->setReceiptHandle($message['ReceiptHandle'])->setAttributes($message['Attributes']));
         }
-
         return $collection;
     }
-
     /**
      * Test: receive Message in failure
      */
     public function testReceiveMessageFailure()
     {
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('receiveMessage')
-            ->withAnyParameters()
-            ->willThrowException(new AwsException(
-                'AWS Client Exception',
-                new Command('receive-message-command')
-            ));
-
+        $client->expects($this->any())->method('receiveMessage')->withAnyParameters()->willThrowException(new AwsException('AWS Client Exception', new Command('receive-message-command')));
         $queue = new BaseQueue($client, 'bad-queue-name', 'bad-queue-url', new BasicWorker(), []);
         $this->expectException(\InvalidArgumentException::class);
         $queue->receiveMessage();
     }
-
     /**
      * Test: Delete a message from queue
      */
@@ -308,20 +197,11 @@ class BaseQueueTest extends TestCase
     {
         $queueUrl = 'queue-url';
         $message = (new Message())->setReceiptHandle('my-receipt-handle');
-
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('deleteMessage')
-            ->with([
-                'QueueUrl' => $queueUrl,
-                'ReceiptHandle' => $message->getReceiptHandle()
-            ])
-            ->willReturn(true);
-
+        $client->expects($this->any())->method('deleteMessage')->with(['QueueUrl' => $queueUrl, 'ReceiptHandle' => $message->getReceiptHandle()])->willReturn(true);
         $queue = new BaseQueue($client, 'queue-name', $queueUrl, new BasicWorker(), []);
         $this->assertTrue($queue->deleteMessage($message));
     }
-
     /**
      * Test: Delete a message from queue in failure
      */
@@ -329,24 +209,12 @@ class BaseQueueTest extends TestCase
     {
         $queueUrl = 'bad-queue-url';
         $message = (new Message())->setReceiptHandle('my-receipt-handle');
-
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('deleteMessage')
-            ->with([
-                'QueueUrl' => $queueUrl,
-                'ReceiptHandle' => $message->getReceiptHandle()
-            ])
-            ->willThrowException(new AwsException(
-                'AWS Client Exception',
-                new Command('delete-message-command')
-            ));
-
+        $client->expects($this->any())->method('deleteMessage')->with(['QueueUrl' => $queueUrl, 'ReceiptHandle' => $message->getReceiptHandle()])->willThrowException(new AwsException('AWS Client Exception', new Command('delete-message-command')));
         $queue = new BaseQueue($client, 'bad-queue-name', $queueUrl, new BasicWorker(), []);
         $this->expectException(\InvalidArgumentException::class);
         $queue->deleteMessage($message);
     }
-
     /**
      * Test: Release a message from processing, making it visible again
      */
@@ -354,21 +222,11 @@ class BaseQueueTest extends TestCase
     {
         $queueUrl = 'queue-url';
         $message = (new Message())->setReceiptHandle('my-receipt-handle');
-
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('changeMessageVisibility')
-            ->with([
-                'QueueUrl' => $queueUrl,
-                'ReceiptHandle' => $message->getReceiptHandle(),
-                'VisibilityTimeout' => 0
-            ])
-            ->willReturn(true);
-
+        $client->expects($this->any())->method('changeMessageVisibility')->with(['QueueUrl' => $queueUrl, 'ReceiptHandle' => $message->getReceiptHandle(), 'VisibilityTimeout' => 0])->willReturn(true);
         $queue = new BaseQueue($client, 'queue-name', $queueUrl, new BasicWorker(), []);
         $this->assertTrue($queue->releaseMessage($message));
     }
-
     /**
      * Test: Release a message from processing in failure
      */
@@ -376,62 +234,31 @@ class BaseQueueTest extends TestCase
     {
         $queueUrl = 'bad-queue-url';
         $message = (new Message())->setReceiptHandle('my-receipt-handle');
-
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('changeMessageVisibility')
-            ->with([
-                'QueueUrl' => $queueUrl,
-                'ReceiptHandle' => $message->getReceiptHandle(),
-                'VisibilityTimeout' => 0
-            ])
-            ->willThrowException(new AwsException(
-                'AWS Client Exception',
-                new Command('release-message-command')
-            ));
-
+        $client->expects($this->any())->method('changeMessageVisibility')->with(['QueueUrl' => $queueUrl, 'ReceiptHandle' => $message->getReceiptHandle(), 'VisibilityTimeout' => 0])->willThrowException(new AwsException('AWS Client Exception', new Command('release-message-command')));
         $queue = new BaseQueue($client, 'bad-queue-name', $queueUrl, new BasicWorker(), []);
         $this->expectException(\InvalidArgumentException::class);
         $queue->releaseMessage($message);
     }
-
     /**
      * Test: Delete a message from queue
      */
     public function testPurge()
     {
         $queueUrl = 'queue-url';
-
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('purgeQueue')
-            ->with([
-                'QueueUrl' => $queueUrl
-            ])
-            ->willReturn(true);
-
+        $client->expects($this->any())->method('purgeQueue')->with(['QueueUrl' => $queueUrl])->willReturn(true);
         $queue = new BaseQueue($client, 'queue-name', $queueUrl, new BasicWorker(), []);
         $this->assertTrue($queue->purge());
     }
-
     /**
      * Test: Delete a message from queue in failure
      */
     public function testPurgeFailure()
     {
         $queueUrl = 'bad-queue-url';
-
         $client = $this->getAwsClient();
-        $client->expects($this->any())
-            ->method('purgeQueue')
-            ->with([
-                'QueueUrl' => $queueUrl
-            ])
-            ->willThrowException(new AwsException(
-                'AWS Client Exception',
-                new Command('delete-message-command')
-            ));
-
+        $client->expects($this->any())->method('purgeQueue')->with(['QueueUrl' => $queueUrl])->willThrowException(new AwsException('AWS Client Exception', new Command('delete-message-command')));
         $queue = new BaseQueue($client, 'bad-queue-name', $queueUrl, new BasicWorker(), []);
         $this->expectException(\InvalidArgumentException::class);
         $queue->purge();

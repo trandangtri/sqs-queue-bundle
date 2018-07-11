@@ -15,14 +15,12 @@ abstract class AbstractWorker
      *
      * @return bool
      */
-    final public function process(Message $message)
+    public final function process(Message $message)
     {
         if ($message->getBody() === 'ping') {
             echo 'Pong. Now is ' . (new \DateTime('now'))->format('M d, Y H:i:s') . PHP_EOL;
-
             return true;
         }
-
         $this->preExecute($message);
         try {
             $result = $this->execute($message);
@@ -30,10 +28,8 @@ abstract class AbstractWorker
             return false;
         }
         $this->postExecute($message);
-
         return $result;
     }
-
     /**
      * @param Message $message
      */
@@ -41,7 +37,6 @@ abstract class AbstractWorker
     {
         // Do something here
     }
-
     /**
      * @param Message $message
      */
@@ -49,11 +44,10 @@ abstract class AbstractWorker
     {
         // Do something here
     }
-
     /**
      * @param Message $message
      *
      * @return boolean
      */
-    abstract protected function execute(Message $message);
+    protected abstract function execute(Message $message);
 }

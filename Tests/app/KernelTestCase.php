@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
 /**
  * Class KernelTestCase
  * @package TriTran\SqsQueueBundle\Tests
@@ -19,7 +18,6 @@ class KernelTestCase extends SymfonyKernelTestCase
      * @var ContainerInterface
      */
     private $container;
-
     /**
      * Sets the container.
      *
@@ -29,7 +27,6 @@ class KernelTestCase extends SymfonyKernelTestCase
     {
         $this->container = $container;
     }
-
     /**
      * Returns service container.
      *
@@ -44,10 +41,8 @@ class KernelTestCase extends SymfonyKernelTestCase
             static::bootKernel($kernelOptions);
             $this->container = static::$kernel->getContainer();
         }
-
         return $this->container;
     }
-
     /**
      * @inheritdoc
      */
@@ -55,10 +50,8 @@ class KernelTestCase extends SymfonyKernelTestCase
     {
         $kernel = new AppKernel('test', true);
         $kernel->boot();
-
         return $kernel;
     }
-
     /**
      * @param ContainerAwareCommand $command
      *
@@ -69,7 +62,6 @@ class KernelTestCase extends SymfonyKernelTestCase
         $application = new Application();
         $command->setContainer($this->getContainer());
         $application->add($command);
-
         return new CommandTester($application->find($command->getName()));
     }
 }

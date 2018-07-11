@@ -39,11 +39,9 @@ class QueueListCommand extends ContainerAwareCommand
     {
         $io = new SymfonyStyle($input, $output);
         $io->title('Start getting the list of existing queues in SQS');
-
         /** @var QueueManager $queueManager */
         $queueManager = $this->getContainer()->get('tritran.sqs_queue.queue_manager');
         $result = $queueManager->listQueue($input->getOption('prefix'));
-
         if (empty($result)) {
             $io->text('You don\'t have any queue at this moment. Please go to AWS Console to create a new one.');
         } else {
@@ -51,7 +49,6 @@ class QueueListCommand extends ContainerAwareCommand
                 return [$value];
             }, $result));
         }
-
         $io->success('Done');
     }
 }

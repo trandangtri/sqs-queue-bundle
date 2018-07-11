@@ -15,12 +15,10 @@ class QueueFactory
      * @var BaseQueue[]
      */
     private $queues;
-
     /**
      * @var SqsClient
      */
     private $client;
-
     /**
      * QueueFactory constructor.
      *
@@ -30,7 +28,6 @@ class QueueFactory
     {
         $this->client = $client;
     }
-
     /**
      * @param SqsClient $client
      * @param string $queueName
@@ -40,18 +37,11 @@ class QueueFactory
      *
      * @return BaseQueue
      */
-    public static function createQueue(
-        SqsClient $client,
-        string $queueName,
-        string $queueUrl,
-        AbstractWorker $queueWorker,
-        array $options = []
-    ) {
+    public static function createQueue(SqsClient $client, $queueName, $queueUrl, AbstractWorker $queueWorker, array $options = [])
+    {
         $instance = new self($client);
-
         return $instance->create($queueName, $queueUrl, $queueWorker, $options);
     }
-
     /**
      * @param string $queueName
      * @param string $queueUrl
@@ -60,30 +50,22 @@ class QueueFactory
      *
      * @return BaseQueue
      */
-    public function create(
-        string $queueName,
-        string $queueUrl,
-        AbstractWorker $queueWorker,
-        array $options = []
-    ) {
+    public function create($queueName, $queueUrl, AbstractWorker $queueWorker, array $options = [])
+    {
         if ($this->queues === null) {
             $this->queues = [];
         }
-
         if (isset($this->queues[$queueUrl])) {
             return $this->queues[$queueUrl];
         }
-
         $queue = new BaseQueue($this->client, $queueName, $queueUrl, $queueWorker, $options);
         $this->queues[$queueUrl] = $queue;
-
         return $queue;
     }
-
     /**
      * @return SqsClient
      */
-    public function getClient(): SqsClient
+    public function getClient()
     {
         return $this->client;
     }
