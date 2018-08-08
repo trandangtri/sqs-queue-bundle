@@ -26,7 +26,6 @@ class QueueManager
         'ReceiveMessageWaitTimeSeconds' => 0,
         'VisibilityTimeout' => 30,
         'RedrivePolicy' => '',
-        'ContentBasedDeduplication' => false
     ];
 
     /**
