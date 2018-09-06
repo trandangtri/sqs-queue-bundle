@@ -31,7 +31,7 @@ class QueueManagerTest extends TestCase
             ->method('get')
             ->withAnyParameters()
             ->willReturnCallback(function ($arg) use ($entries) {
-                return $entries[$arg] ?? [];
+                return isset($entries[$arg]) ? $entries[$arg] : [];
             });
 
         return $result;

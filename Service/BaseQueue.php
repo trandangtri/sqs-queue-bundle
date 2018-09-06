@@ -111,10 +111,10 @@ class BaseQueue
                 'MaxNumberOfMessages' => $limit,
                 'MessageAttributeNames' => ['All'],
                 'QueueUrl' => $this->queueUrl,
-                'WaitTimeSeconds' => $this->attributes['ReceiveMessageWaitTimeSeconds'] ?? 0,
+                'WaitTimeSeconds' => isset($this->attributes['ReceiveMessageWaitTimeSeconds']) ? $this->attributes['ReceiveMessageWaitTimeSeconds'] : 0,
             ]);
 
-            $messages = $result->get('Messages') ?? [];
+            $messages = !empty($result->get('Messages')) ? $result->get('Messages') : [];
             foreach ($messages as $message) {
                 $collection->append(
                     (new Message())

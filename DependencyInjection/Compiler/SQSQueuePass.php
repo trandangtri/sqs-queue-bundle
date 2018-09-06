@@ -64,21 +64,21 @@ class SQSQueuePass implements CompilerPassInterface
                         $callable,
                         [
                             'DelaySeconds' =>
-                                $queueOption['attributes']['delay_seconds'] ?? 0,
+                                isset($queueOption['attributes']['delay_seconds']) ? $queueOption['attributes']['delay_seconds'] : 0,
                             'MaximumMessageSize' =>
-                                $queueOption['attributes']['maximum_message_size'] ?? 262144,
+                                isset($queueOption['attributes']['maximum_message_size']) ? $queueOption['attributes']['maximum_message_size'] : 262144,
                             'MessageRetentionPeriod' =>
-                                $queueOption['attributes']['message_retention_period'] ?? 345600,
+                                isset($queueOption['attributes']['message_retention_period']) ? $queueOption['attributes']['message_retention_period'] : 345600,
                             'ReceiveMessageWaitTimeSeconds' =>
-                                $queueOption['attributes']['receive_message_wait_time_seconds'] ?? 20,
+                                isset($queueOption['attributes']['receive_message_wait_time_seconds']) ? $queueOption['attributes']['receive_message_wait_time_seconds'] : 20,
                             'VisibilityTimeout' =>
-                                $queueOption['attributes']['visibility_timeout'] ?? 30,
+                                isset($queueOption['attributes']['visibility_timeout']) ? $queueOption['attributes']['visibility_timeout'] : 30,
                             'RedrivePolicy' => !empty($queueOption['attributes']['redrive_policy']['dead_letter_queue'])
                                 ? json_encode([
                                     'deadLetterTargetArn' =>
-                                        $queueOption['attributes']['redrive_policy']['dead_letter_queue'] ?? '',
+                                        isset($queueOption['attributes']['redrive_policy']['dead_letter_queue']) ? $queueOption['attributes']['redrive_policy']['dead_letter_queue'] : '',
                                     'maxReceiveCount' =>
-                                        $queueOption['attributes']['redrive_policy']['max_receive_count'] ?? 5,
+                                        isset($queueOption['attributes']['redrive_policy']['max_receive_count']) ? $queueOption['attributes']['redrive_policy']['max_receive_count'] : 5,
                                 ]) : ''
                         ]
                     ]);
