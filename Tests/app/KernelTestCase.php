@@ -18,7 +18,7 @@ class KernelTestCase extends SymfonyKernelTestCase
     /**
      * @var ContainerInterface
      */
-    private $container;
+    private $cont;
 
     /**
      * Sets the container.
@@ -27,7 +27,7 @@ class KernelTestCase extends SymfonyKernelTestCase
      */
     public function setContainer(ContainerInterface $container = null)
     {
-        $this->container = $container;
+        $this->cont = $container;
     }
 
     /**
@@ -40,12 +40,12 @@ class KernelTestCase extends SymfonyKernelTestCase
      */
     protected function getContainer($reinitialize = false, array $kernelOptions = [])
     {
-        if ($this->container === null || $reinitialize) {
+        if ($this->cont === null || $reinitialize) {
             static::bootKernel($kernelOptions);
-            $this->container = static::$kernel->getContainer();
+            $this->cont = static::$kernel->getContainer();
         }
 
-        return $this->container;
+        return $this->cont;
     }
 
     /**
