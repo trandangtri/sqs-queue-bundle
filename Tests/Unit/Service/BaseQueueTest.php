@@ -6,7 +6,6 @@ use Aws\Command;
 use Aws\Exception\AwsException;
 use Aws\Result;
 use Aws\Sqs\SqsClient;
-use PHPUnit\Framework\Error as PHPUnitError;
 use PHPUnit\Framework\TestCase;
 use TriTran\SqsQueueBundle\Service\BaseQueue;
 use TriTran\SqsQueueBundle\Service\Message;
@@ -19,6 +18,52 @@ use TriTran\SqsQueueBundle\Tests\app\Worker\BasicWorker;
  */
 class BaseQueueTest extends TestCase
 {
+    /**
+     * @var array
+     */
+    private $errors = [];
+
+    /**
+     *
+     */
+    protected function setUp()
+    {
+        $this->errors = [];
+        set_error_handler([$this, "errorHandler"]);
+    }
+
+    /**
+     * @param $errno
+     * @param $errstr
+     * @param $errfile
+     * @param $errline
+     * @param $errcontext
+     */
+    public function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
+    {
+        $this->errors[] = compact('errno', 'errstr', 'errfile', 'errline', 'errcontext');
+    }
+
+    /**
+     * @param $errstr
+     * @param $errno
+     */
+    public function assertError($errstr, $errno)
+    {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                $this->assertTrue(true);
+
+                return;
+            }
+        }
+        $this->fail(
+            "Error with level " . $errno . " and message '" . $errstr . "' not found in ",
+            var_export($this->errors, true)
+        );
+    }
+
     /**
      * @param array $entries
      *
@@ -132,6 +177,27 @@ class BaseQueueTest extends TestCase
     }
 
     /**
+     * Test: send message to a queue
+     */
+    public function testSendPingMessage()
+    {
+        $queueUrl = 'queue-url';
+
+        $client = $this->getAwsClient();
+        $client->expects($this->any())
+            ->method('sendMessage')
+            ->with([
+                'MessageBody' => 'ping',
+                'MessageAttributes' => [],
+                'QueueUrl' => $queueUrl
+            ])
+            ->willReturn($this->getAwsResult(['MessageId' => 'new-message-id']));
+
+        $queue = new BaseQueue($client, 'queue-name', $queueUrl, new BasicWorker(), []);
+        $this->assertEquals('new-message-id', $queue->ping());
+    }
+
+    /**
      * Test: send message to a FIFO queue
      */
     public function testSendMessageToFifoQueue()
@@ -159,6 +225,35 @@ class BaseQueueTest extends TestCase
             'new-message-id',
             $queue->sendMessage(new Message($messageBody, $messageAttr, $groupId, $deduplicationId))
         );
+    }
+
+    /**
+     * Test: send message to a FIFO queue
+     */
+    public function testSendMessageToFifoQueueWithDelay()
+    {
+        $delay = random_int(0, 10);
+        $messageBody = 'my-message';
+        $messageAttr = ['x', 'y', 'z'];
+        $queueUrl = 'queue-url';
+        $groupId = 'group-name';
+        $deduplicationId = 'deduplication-id';
+
+        $client = $this->getAwsClient();
+        $client->expects($this->any())
+            ->method('sendMessage')
+            ->with([
+                'MessageAttributes' => $messageAttr,
+                'MessageBody' => $messageBody,
+                'QueueUrl' => $queueUrl,
+                'MessageGroupId' => $groupId,
+                'MessageDeduplicationId' => $deduplicationId,
+            ])
+            ->willReturn($this->getAwsResult(['MessageId' => 'new-message-id']));
+
+        $queue = new BaseQueue($client, 'queue-name.fifo', $queueUrl, new BasicWorker(), []);
+        $queue->sendMessage(new Message($messageBody, $messageAttr, $groupId, $deduplicationId), $delay);
+        $this->assertError('FIFO queues don\'t support per-message delays, only per-queue delays.', E_USER_WARNING);
     }
 
     /**
@@ -218,7 +313,7 @@ class BaseQueueTest extends TestCase
 
         $queue = new BaseQueue($client, 'queue-name.fifo', 'queue-url', new BasicWorker(), []);
 
-        $this->expectException(PHPUnitError\Warning::class);
+        $this->expectException(\InvalidArgumentException::class);
         $queue->sendMessage(new Message('my-message', [], ''), random_int(0, 10));
     }
 

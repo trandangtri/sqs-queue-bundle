@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use TriTran\SqsQueueBundle\Service\BaseQueue;
+use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
  * Class SQSQueuePass
@@ -51,6 +52,32 @@ class SQSQueuePass implements CompilerPassInterface
                     );
                 }
 
+                $queueAttr = [
+                    'DelaySeconds' =>
+                        $queueOption['attributes']['delay_seconds'] ?? 0,
+                    'MaximumMessageSize' =>
+                        $queueOption['attributes']['maximum_message_size'] ?? 262144,
+                    'MessageRetentionPeriod' =>
+                        $queueOption['attributes']['message_retention_period'] ?? 345600,
+                    'ReceiveMessageWaitTimeSeconds' =>
+                        $queueOption['attributes']['receive_message_wait_time_seconds'] ?? 20,
+                    'VisibilityTimeout' =>
+                        $queueOption['attributes']['visibility_timeout'] ?? 30,
+                    'RedrivePolicy' => !empty($queueOption['attributes']['redrive_policy']['dead_letter_queue'])
+                        ? json_encode([
+                            'deadLetterTargetArn' =>
+                                $queueOption['attributes']['redrive_policy']['dead_letter_queue'] ?? '',
+                            'maxReceiveCount' =>
+                                $queueOption['attributes']['redrive_policy']['max_receive_count'] ?? 5,
+                        ]) : ''
+                ];
+                if (QueueManager::isFifoQueue($queueName)) {
+                    $queueAttr = array_merge($queueAttr, [
+                        'ContentBasedDeduplication' =>
+                            $queueOption['attributes']['content_based_deduplication'] ?? true
+                    ]);
+                }
+
                 $queueDefinition = new Definition(BaseQueue::class);
                 $queueDefinition
                     ->setFactory(
@@ -64,27 +91,7 @@ class SQSQueuePass implements CompilerPassInterface
                         $queueName,
                         $queueOption['queue_url'],
                         $callable,
-                        [
-                            'DelaySeconds' =>
-                                $queueOption['attributes']['delay_seconds'] ?? 0,
-                            'MaximumMessageSize' =>
-                                $queueOption['attributes']['maximum_message_size'] ?? 262144,
-                            'MessageRetentionPeriod' =>
-                                $queueOption['attributes']['message_retention_period'] ?? 345600,
-                            'ReceiveMessageWaitTimeSeconds' =>
-                                $queueOption['attributes']['receive_message_wait_time_seconds'] ?? 20,
-                            'VisibilityTimeout' =>
-                                $queueOption['attributes']['visibility_timeout'] ?? 30,
-                            'RedrivePolicy' => !empty($queueOption['attributes']['redrive_policy']['dead_letter_queue'])
-                                ? json_encode([
-                                    'deadLetterTargetArn' =>
-                                        $queueOption['attributes']['redrive_policy']['dead_letter_queue'] ?? '',
-                                    'maxReceiveCount' =>
-                                        $queueOption['attributes']['redrive_policy']['max_receive_count'] ?? 5,
-                                ]) : '',
-                            'ContentBasedDeduplication' =>
-                                $queueOption['attributes']['content_based_deduplication'] ?? false
-                        ]
+                        $queueAttr
                     ]);
 
                 $queueId = sprintf('tritran.sqs_queue.%s', $queueName);

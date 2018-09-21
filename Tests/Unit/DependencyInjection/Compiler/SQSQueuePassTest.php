@@ -109,8 +109,7 @@ class SQSQueuePassTest extends TestCase
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 20,
                             'VisibilityTimeout' => 30,
-                            'RedrivePolicy' => '',
-                            'ContentBasedDeduplication' => false
+                            'RedrivePolicy' => ''
                         ]
                     ]
                 ]
@@ -131,8 +130,7 @@ class SQSQueuePassTest extends TestCase
                             'redrive_policy' => [
                                 'dead_letter_queue' => 'basic_dead_letter_queue_1',
                                 'max_receive_count' => 1
-                            ],
-                            'content_based_deduplication' => true
+                            ]
                         ]
                     ]
                 ],
@@ -149,8 +147,7 @@ class SQSQueuePassTest extends TestCase
                             'RedrivePolicy' => json_encode([
                                 'deadLetterTargetArn' => 'basic_dead_letter_queue_1',
                                 'maxReceiveCount' => 1
-                            ]),
-                            'ContentBasedDeduplication' => true
+                            ])
                         ]
                     ]
                 ]
@@ -171,8 +168,7 @@ class SQSQueuePassTest extends TestCase
                             'redrive_policy' => [
                                 'dead_letter_queue' => 'basic_dead_letter_queue_2',
                                 'max_receive_count' => 2
-                            ],
-                            'content_based_deduplication' => true
+                            ]
                         ]
                     ]
                 ],
@@ -189,18 +185,44 @@ class SQSQueuePassTest extends TestCase
                             'RedrivePolicy' => json_encode([
                                 'deadLetterTargetArn' => 'basic_dead_letter_queue_2',
                                 'maxReceiveCount' => 2
-                            ]),
+                            ])
+                        ]
+                    ]
+                ]
+            ],
+            // Case #3: Load a FIFO queue
+            [
+                $container,
+                [
+                    'queue.fifo' => [
+                        'queue_url' => 'fifo-queue-url',
+                        'worker' => $basicWorker,
+                        'attributes' => []
+                    ]
+                ],
+                [
+                    'queue.fifo' => [
+                        'fifo-queue-url',
+                        new Definition($basicWorker),
+                        [
+                            'DelaySeconds' => 0,
+                            'MaximumMessageSize' => 262144,
+                            'MessageRetentionPeriod' => 345600,
+                            'ReceiveMessageWaitTimeSeconds' => 20,
+                            'VisibilityTimeout' => 30,
+                            'RedrivePolicy' => '',
                             'ContentBasedDeduplication' => true
                         ]
                     ]
                 ]
             ],
-            // Case #3: Load multi queues at the same time
+            // Case #4: Load multi queues at the same time
             [
                 $container,
                 [
                     'basic-queue-1' => ['queue_url' => 'basic-url-1', 'worker' => $basicWorker],
-                    'basic-queue-2' => ['queue_url' => 'basic-url-2', 'worker' => $basicWorkerAsService]
+                    'basic-queue-2' => ['queue_url' => 'basic-url-2', 'worker' => $basicWorkerAsService],
+                    'queue.fifo' => ['queue_url' => 'fifo-queue-url', 'worker' => $basicWorkerAsService]
                 ],
                 [
                     'basic-queue-1' => [
@@ -212,8 +234,7 @@ class SQSQueuePassTest extends TestCase
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 20,
                             'VisibilityTimeout' => 30,
-                            'RedrivePolicy' => '',
-                            'ContentBasedDeduplication' => false
+                            'RedrivePolicy' => ''
                         ]
                     ],
                     'basic-queue-2' => [
@@ -225,12 +246,25 @@ class SQSQueuePassTest extends TestCase
                             'MessageRetentionPeriod' => 345600,
                             'ReceiveMessageWaitTimeSeconds' => 20,
                             'VisibilityTimeout' => 30,
+                            'RedrivePolicy' => ''
+                        ]
+                    ],
+                    'queue.fifo' => [
+                        'fifo-queue-url',
+                        new Reference($basicWorkerAsService),
+                        [
+                            'DelaySeconds' => 0,
+                            'MaximumMessageSize' => 262144,
+                            'MessageRetentionPeriod' => 345600,
+                            'ReceiveMessageWaitTimeSeconds' => 20,
+                            'VisibilityTimeout' => 30,
                             'RedrivePolicy' => '',
-                            'ContentBasedDeduplication' => false
+                            'ContentBasedDeduplication' => true
                         ]
                     ]
                 ]
-            ]
+            ],
+
         ];
     }
 

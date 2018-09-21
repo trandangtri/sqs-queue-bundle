@@ -283,6 +283,6 @@ class BaseQueue
      */
     final public function isFIFO(): bool
     {
-        return '.fifo' === substr($this->getQueueName(), -5);
+        return QueueManager::isFifoQueue($this->getQueueName());
     }
 }
