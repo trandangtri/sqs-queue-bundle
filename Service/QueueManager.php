@@ -25,8 +25,11 @@ class QueueManager
         'MessageRetentionPeriod' => 345600, // 4 days
         'ReceiveMessageWaitTimeSeconds' => 0,
         'VisibilityTimeout' => 30,
-        'RedrivePolicy' => '',
-        'ContentBasedDeduplication' => false
+        'RedrivePolicy' => ''
+    ];
+
+    const QUEUE_FIFO_ATTR_DEFAULT = [
+        'ContentBasedDeduplication' => true
     ];
 
     /**
@@ -74,11 +77,16 @@ class QueueManager
     {
         $queryUrl = '';
 
-        $queueAttribute = array_filter($queueAttribute, function ($key) {
-            return array_key_exists($key, self::QUEUE_ATTR_DEFAULT);
+        $queueAttributeDefault = self::QUEUE_ATTR_DEFAULT;
+        if (static::isFifoQueue($queueName)) {
+            $queueAttributeDefault = array_merge($queueAttributeDefault, self::QUEUE_FIFO_ATTR_DEFAULT);
+        }
+
+        $queueAttribute = array_filter($queueAttribute, function ($key) use ($queueAttributeDefault) {
+            return array_key_exists($key, $queueAttributeDefault);
         }, ARRAY_FILTER_USE_KEY);
         $attr = [
-            'Attributes' => array_merge(self::QUEUE_ATTR_DEFAULT, $queueAttribute),
+            'Attributes' => array_merge($queueAttributeDefault, $queueAttribute),
             'QueueName' => $queueName
         ];
 
@@ -165,5 +173,15 @@ class QueueManager
     public function getClient(): SqsClient
     {
         return $this->client;
+    }
+
+    /**
+     * @param $queueName
+     *
+     * @return bool
+     */
+    public static function isFifoQueue($queueName): bool
+    {
+        return '.fifo' === substr($queueName, -5);
     }
 }

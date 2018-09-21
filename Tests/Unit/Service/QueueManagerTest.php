@@ -118,6 +118,27 @@ class QueueManagerTest extends TestCase
     }
 
     /**
+     * Test: try to create a new fifo queue
+     */
+    public function testCreateFifoQueue()
+    {
+        $queueAttr = array_merge(QueueManager::QUEUE_ATTR_DEFAULT, QueueManager::QUEUE_FIFO_ATTR_DEFAULT);
+        $queueName = 'queue-url.fifo';
+        
+        $client = $this->getAwsClient();
+        $client->expects($this->any())
+            ->method('createQueue')
+            ->with([
+                'Attributes' => $queueAttr,
+                'QueueName' => $queueName
+            ])
+            ->willReturn($this->getAwsResult(['QueueUrl' => 'queue-url']));
+
+        $manager = new QueueManager($client);
+        $this->assertEquals('queue-url', $manager->createQueue($queueName, $queueAttr));
+    }
+
+    /**
      * Test: try to create a new queue in failure
      */
     public function testCreateFailure()
