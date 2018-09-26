@@ -71,14 +71,20 @@ abstract class AbstractWorker
      *
      * @return void
      */
-    abstract protected function onSucceeded();
+    protected function onSucceeded()
+    {
+        // Do something here
+    }
 
     /**
      * Event fired when worker has failed to process message.
      *
      * @return void
      */
-    abstract protected function onFailed();
+    protected function onFailed()
+    {
+        // Do something here
+    }
 
     /**
      * Check if worker has error after processing.
