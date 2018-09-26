@@ -16,4 +16,20 @@ class BasicWorker extends AbstractWorker
     {
         return true;
     }
+
+    /**
+     * Handle worker on success.
+     */
+    protected function onSucceeded()
+    {
+
+    }
+
+    /**
+     * Handle worker on failure.
+     */
+    protected function onFailed()
+    {
+
+    }
 }
