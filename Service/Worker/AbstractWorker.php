@@ -10,6 +10,9 @@ use TriTran\SqsQueueBundle\Service\Message;
  */
 abstract class AbstractWorker
 {
+    /** @var string  Worker error message after processing. */
+    private $error = null;
+
     /**
      * @param Message $message
      *
@@ -27,9 +30,13 @@ abstract class AbstractWorker
         try {
             $result = $this->execute($message);
         } catch (\Exception $e) {
-            return false;
+            $result = false;
+            $this->error = $e->getMessage();
         }
         $this->postExecute($message);
+
+        // Let worker does something on success or failure
+        $result === true ? $this->onSucceeded() : $this->onFailed();
 
         return $result;
     }
@@ -43,6 +50,8 @@ abstract class AbstractWorker
     }
 
     /**
+     * Do something via post execution. It is better to proceed with task related to message.
+     *
      * @param Message $message
      */
     protected function postExecute(Message $message)
@@ -56,4 +65,45 @@ abstract class AbstractWorker
      * @return boolean
      */
     abstract protected function execute(Message $message);
+
+    /**
+     * Event fired when worker has processed message successfully.
+     *
+     * @return void
+     */
+    protected function onSucceeded()
+    {
+        // Do something here
+    }
+
+    /**
+     * Event fired when worker has failed to process message.
+     *
+     * @return void
+     */
+    protected function onFailed()
+    {
+        // Do something here
+    }
+
+    /**
+     * Check if worker has error after processing.
+     * By default, error is set to <code>null</code>.
+     *
+     * @return bool
+     */
+    public function hasError()
+    {
+        return $this->error !== null;
+    }
+
+    /**
+     * Get worker error message.
+     *
+     * @return string
+     */
+    public function error()
+    {
+        return $this->error;
+    }
 }
