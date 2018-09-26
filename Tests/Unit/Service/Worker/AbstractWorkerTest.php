@@ -51,9 +51,16 @@ class AbstractWorkerTest extends TestCase
             ->method('execute')
             ->with($message)
             ->willReturn(true);
+        $worker->expects($this->once())
+            ->method('onSucceeded');
+        $worker->expects($this->never())
+            ->method('onFailed');
 
         $result = $worker->process($message);
+
         $this->assertTrue($result);
+        $this->assertFalse($worker->hasError());
+        $this->assertNull($worker->error());
     }
 
     /**
@@ -68,8 +75,15 @@ class AbstractWorkerTest extends TestCase
             ->method('execute')
             ->with($message)
             ->willThrowException(new \Exception());
+        $worker->expects($this->once())
+            ->method('onFailed');
+        $worker->expects($this->never())
+            ->method('onSucceeded');
 
         $result = $worker->process($message);
+
         $this->assertFalse($result);
+        $this->assertTrue($worker->hasError());
+        $this->assertNotNull($worker->error());
     }
 }
