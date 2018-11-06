@@ -33,7 +33,7 @@ class TriTranSqsQueueExtension extends Extension
      */
     private function configSQSQueue(ContainerBuilder $container, array $config)
     {
-        $engineConfig = isset($config['sqs_queue']) ? $config['sqs_queue'] : [];
+        $engineConfig = $config['sqs_queue'] ?? [];
 
         if (isset($engineConfig['queues']) && !empty($engineConfig['queues'])) {
             $container->setParameter('tritran.sqs_queue.queues', $config['sqs_queue']['queues']);
