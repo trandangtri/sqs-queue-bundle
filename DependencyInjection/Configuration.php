@@ -23,15 +23,20 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $tree = new TreeBuilder();
-        $rootNode = $tree->root('tritran_sqs_queue');
+        $treeBuilder = new TreeBuilder('tritran_sqs_queue');
+        // Keep compatibility with symfony/config < 4.2;
+        if (!method_exists($treeBuilder, 'getRootNode')) {
+            $rootNode = $treeBuilder->root('tritran_sqs_queue');
+        } else {
+            $rootNode = $treeBuilder->getRootNode();
+        }
 
         $rootNode
             ->children()
                 ->append($this->getSQSQueueNodeDef())
             ->end();
 
-        return $tree;
+        return $treeBuilder;
     }
 
     /**
