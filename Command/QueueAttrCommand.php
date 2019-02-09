@@ -2,19 +2,23 @@
 
 namespace TriTran\SqsQueueBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
  * Class QueueAttrCommand
  * @package TriTran\SqsQueueBundle\Command
  */
-class QueueAttrCommand extends ContainerAwareCommand
+class QueueAttrCommand extends Command implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @inheritDoc
      */
@@ -41,7 +45,7 @@ class QueueAttrCommand extends ContainerAwareCommand
         $io->title(sprintf('Start getting the attributes of queue URL <comment>%s</comment>', $queueUrl));
 
         /** @var QueueManager $queueManager */
-        $queueManager = $this->getContainer()->get('tritran.sqs_queue.queue_manager');
+        $queueManager = $this->container->get('tritran.sqs_queue.queue_manager');
         $result = $queueManager->getQueueAttributes($queueUrl);
         $io->table(['Attribute Name', 'Value'], array_map(function ($k, $v) {
             return [$k, $v];

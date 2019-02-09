@@ -2,19 +2,23 @@
 
 namespace TriTran\SqsQueueBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
  * Class QueueListCommand
  * @package TriTran\SqsQueueBundle\Command
  */
-class QueueListCommand extends ContainerAwareCommand
+class QueueListCommand extends Command implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @inheritDoc
      */
@@ -41,7 +45,7 @@ class QueueListCommand extends ContainerAwareCommand
         $io->title('Start getting the list of existing queues in SQS');
 
         /** @var QueueManager $queueManager */
-        $queueManager = $this->getContainer()->get('tritran.sqs_queue.queue_manager');
+        $queueManager = $this->container->get('tritran.sqs_queue.queue_manager');
         $result = $queueManager->listQueue($input->getOption('prefix'));
 
         if (empty($result)) {

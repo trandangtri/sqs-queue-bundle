@@ -2,20 +2,24 @@
 
 namespace TriTran\SqsQueueBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\BaseQueue;
 
 /**
  * Class QueuePurgeCommand
  * @package TriTran\SqsQueueBundle\Command
  */
-class QueuePurgeCommand extends ContainerAwareCommand
+class QueuePurgeCommand extends Command implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @inheritDoc
      */
@@ -51,14 +55,14 @@ class QueuePurgeCommand extends ContainerAwareCommand
         }
 
         $queueName = $input->getArgument('name');
-        if (!$this->getContainer()->has(sprintf('tritran.sqs_queue.%s', $queueName))) {
+        if (!$this->container->has(sprintf('tritran.sqs_queue.%s', $queueName))) {
             throw new \InvalidArgumentException(sprintf('Queue [%s] does not exist.', $queueName));
         }
 
         $io->title(sprintf('Start purge all your message in SQS <comment>%s</comment>', $queueName));
 
         /** @var BaseQueue $queue */
-        $queue = $this->getContainer()->get(sprintf('tritran.sqs_queue.%s', $queueName));
+        $queue = $this->container->get(sprintf('tritran.sqs_queue.%s', $queueName));
         $queue->purge();
 
         $io->text('All message in your specified queue were removed successfully');

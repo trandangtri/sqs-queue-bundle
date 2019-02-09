@@ -2,11 +2,13 @@
 
 namespace TriTran\SqsQueueBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\BaseQueue;
 use TriTran\SqsQueueBundle\Service\QueueManager;
 
@@ -14,8 +16,10 @@ use TriTran\SqsQueueBundle\Service\QueueManager;
  * Class QueueUpdateCommand
  * @package TriTran\SqsQueueBundle\Command
  */
-class QueueUpdateCommand extends ContainerAwareCommand
+class QueueUpdateCommand extends Command implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @inheritDoc
      */
@@ -46,24 +50,24 @@ class QueueUpdateCommand extends ContainerAwareCommand
             return;
         }
 
-        if (!$this->getContainer()->hasParameter('tritran.sqs_queue.queues')) {
+        if (!$this->container->hasParameter('tritran.sqs_queue.queues')) {
             $io->warning('Queue Configuration is missing.');
 
             return;
         }
 
         /** @var QueueManager $queueManager */
-        $queueManager = $this->getContainer()->get('tritran.sqs_queue.queue_manager');
+        $queueManager = $this->container->get('tritran.sqs_queue.queue_manager');
         $awsQueues = $queueManager->listQueue();
 
         /** @var array $localQueues */
-        $localQueues = $this->getContainer()->getParameter('tritran.sqs_queue.queues');
+        $localQueues = $this->container->getParameter('tritran.sqs_queue.queues');
         foreach ($localQueues as $queueName => $queueOption) {
             if (in_array($queueOption['queue_url'], $awsQueues, true)) {
                 $io->text(sprintf('We will update <comment>%s</comment>', $queueOption['queue_url']));
 
                 /** @var BaseQueue $queue */
-                $queue = $this->getContainer()->get(sprintf('tritran.sqs_queue.%s', $queueName));
+                $queue = $this->container->get(sprintf('tritran.sqs_queue.%s', $queueName));
                 $queueManager->setQueueAttributes($queue->getQueueUrl(), $queue->getAttributes());
 
                 $io->table(['Attribute Name', 'Value'], array_map(function ($k, $v) {

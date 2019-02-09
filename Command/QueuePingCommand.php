@@ -2,19 +2,23 @@
 
 namespace TriTran\SqsQueueBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\BaseQueue;
 
 /**
  * Class QueuePingCommand
  * @package TriTran\SqsQueueBundle\Command
  */
-class QueuePingCommand extends ContainerAwareCommand
+class QueuePingCommand extends Command implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @inheritDoc
      */
@@ -36,7 +40,7 @@ class QueuePingCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $queueName = $input->getArgument('name');
-        if (!$this->getContainer()->has(sprintf('tritran.sqs_queue.%s', $queueName))) {
+        if (!$this->container->has(sprintf('tritran.sqs_queue.%s', $queueName))) {
             throw new \InvalidArgumentException(sprintf('Queue [%s] does not exist.', $queueName));
         }
 
@@ -44,7 +48,7 @@ class QueuePingCommand extends ContainerAwareCommand
         $io->title(sprintf('Start sending a Hello message to SQS <comment>%s</comment>', $queueName));
 
         /** @var BaseQueue $queue */
-        $queue = $this->getContainer()->get(sprintf('tritran.sqs_queue.%s', $queueName));
+        $queue = $this->container->get(sprintf('tritran.sqs_queue.%s', $queueName));
         $messageId = $queue->ping();
 
         $io->text(sprintf('Sent successfully. MessageID: <comment>%s</comment>', $messageId));
