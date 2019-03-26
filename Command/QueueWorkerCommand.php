@@ -30,6 +30,7 @@ class QueueWorkerCommand extends Command implements ContainerAwareInterface
             ->setName('tritran:sqs_queue:worker')
             ->addArgument('name', InputArgument::REQUIRED, 'Queue Name', null)
             ->addOption('messages', 'm', InputOption::VALUE_OPTIONAL, 'Messages to consume', 0)
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Max messages to consume per request', 1)
             ->setDescription('Start a worker that will listen to a specified SQS queue');
     }
 
@@ -47,6 +48,11 @@ class QueueWorkerCommand extends Command implements ContainerAwareInterface
             throw new \InvalidArgumentException("The -m option should be null or greater than 0");
         }
 
+        $limit = $input->getOption('limit');
+        if ($limit < 1) {
+            throw new \InvalidArgumentException("The -l option should be null or greater than 1");
+        }
+
         $io = new SymfonyStyle($input, $output);
         $io->title(sprintf('Start listening to queue <comment>%s</comment>', $queueName));
 
@@ -54,7 +60,7 @@ class QueueWorkerCommand extends Command implements ContainerAwareInterface
         $queue = $this->container->get(sprintf('tritran.sqs_queue.%s', $queueName));
 
         /** @var BaseWorker $worker */
-        $worker = $this->container->get('tritran.sqs_queue.queue_worker');
-        $worker->start($queue, $amount);
+        $worker = $this->getContainer()->get('tritran.sqs_queue.queue_worker');
+        $worker->start($queue, $amount, $limit);
     }
 }
