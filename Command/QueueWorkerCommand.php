@@ -60,7 +60,7 @@ class QueueWorkerCommand extends Command implements ContainerAwareInterface
         $queue = $this->container->get(sprintf('tritran.sqs_queue.%s', $queueName));
 
         /** @var BaseWorker $worker */
-        $worker = $this->getContainer()->get('tritran.sqs_queue.queue_worker');
+        $worker = $this->container->get('tritran.sqs_queue.queue_worker');
         $worker->start($queue, $amount, $limit);
     }
 }
