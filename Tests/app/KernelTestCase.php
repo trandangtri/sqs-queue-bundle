@@ -3,15 +3,14 @@
 namespace TriTran\SqsQueueBundle\Tests\app;
 
 use AppKernel;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class KernelTestCase
- * @package TriTran\SqsQueueBundle\Tests
+ * Class KernelTestCase.
  */
 class KernelTestCase extends SymfonyKernelTestCase
 {
@@ -23,7 +22,7 @@ class KernelTestCase extends SymfonyKernelTestCase
     /**
      * Sets the container.
      *
-     * @param ContainerInterface|null $container A ContainerInterface instance or null
+     * @param ContainerInterface|null $container A ContainerInterface instance or null.
      */
     public function setContainer(ContainerInterface $container = null)
     {
@@ -33,7 +32,7 @@ class KernelTestCase extends SymfonyKernelTestCase
     /**
      * Returns service container.
      *
-     * @param bool $reinitialize Force kernel reinitialization.
+     * @param bool  $reinitialize Force kernel reinitialization.
      * @param array $kernelOptions Options used passed to kernel if it needs to be initialized.
      *
      * @return ContainerInterface
@@ -49,7 +48,7 @@ class KernelTestCase extends SymfonyKernelTestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected static function createKernel(array $options = [])
     {

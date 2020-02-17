@@ -7,7 +7,7 @@ use TriTran\SqsQueueBundle\Service\QueueManager;
 use TriTran\SqsQueueBundle\Tests\app\KernelTestCase;
 
 /**
- * Class QueueAttrCommandTest
+ * Class QueueAttrCommandTest.
  */
 class QueueAttrCommandTest extends KernelTestCase
 {

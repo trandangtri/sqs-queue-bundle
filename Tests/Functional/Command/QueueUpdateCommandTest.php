@@ -7,8 +7,7 @@ use TriTran\SqsQueueBundle\Service\QueueManager;
 use TriTran\SqsQueueBundle\Tests\app\KernelTestCase;
 
 /**
- * Class QueueUpdateCommandTest
- * @package TriTran\SqsQueueBundle\Tests\Functional\Command
+ * Class QueueUpdateCommandTest.
  */
 class QueueUpdateCommandTest extends KernelTestCase
 {
@@ -18,7 +17,7 @@ class QueueUpdateCommandTest extends KernelTestCase
     private $queueManager;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setUp()
     {

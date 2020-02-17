@@ -7,7 +7,7 @@ use TriTran\SqsQueueBundle\Service\BaseWorker;
 use TriTran\SqsQueueBundle\Tests\app\KernelTestCase;
 
 /**
- * Class QueueUpdateCommandTest
+ * Class QueueWorkerCommandTest.
  */
 class QueueWorkerCommandTest extends KernelTestCase
 {
@@ -57,7 +57,7 @@ class QueueWorkerCommandTest extends KernelTestCase
         $this->expectException(\InvalidArgumentException::class);
         $commandTester->execute([
             'name' => 'basic_queue',
-            '--messages' => -1
+            '--messages' => -1,
         ]);
     }
 
