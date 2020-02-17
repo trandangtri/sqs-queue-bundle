@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\BaseQueue;
 
 /**
- * Class QueuePingCommand
+ * Class QueuePingCommand.
  */
 class QueuePingCommand extends Command implements ContainerAwareInterface
 {

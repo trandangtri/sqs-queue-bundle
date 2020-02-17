@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
- * Class QueueAttrCommand
+ * Class QueueAttrCommand.
  */
 class QueueAttrCommand extends Command implements ContainerAwareInterface
 {

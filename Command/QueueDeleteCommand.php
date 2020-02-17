@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
- * Class QueueDeleteCommand
+ * Class QueueDeleteCommand.
  */
 class QueueDeleteCommand extends Command implements ContainerAwareInterface
 {

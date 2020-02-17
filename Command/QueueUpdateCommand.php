@@ -13,7 +13,7 @@ use TriTran\SqsQueueBundle\Service\BaseQueue;
 use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
- * Class QueueUpdateCommand
+ * Class QueueUpdateCommand.
  */
 class QueueUpdateCommand extends Command implements ContainerAwareInterface
 {

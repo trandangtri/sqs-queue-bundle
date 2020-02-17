@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\BaseQueue;
 
 /**
- * Class QueuePurgeCommand
+ * Class QueuePurgeCommand.
  */
 class QueuePurgeCommand extends Command implements ContainerAwareInterface
 {

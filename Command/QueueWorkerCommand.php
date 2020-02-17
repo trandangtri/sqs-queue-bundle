@@ -14,7 +14,7 @@ use TriTran\SqsQueueBundle\Service\BaseQueue;
 use TriTran\SqsQueueBundle\Service\BaseWorker;
 
 /**
- * Class QueueWorkerCommand
+ * Class QueueWorkerCommand.
  */
 class QueueWorkerCommand extends Command implements ContainerAwareInterface
 {
@@ -44,12 +44,12 @@ class QueueWorkerCommand extends Command implements ContainerAwareInterface
         }
         $amount = $input->getOption('messages');
         if ($amount < 0) {
-            throw new \InvalidArgumentException("The -m option should be null or greater than 0");
+            throw new \InvalidArgumentException('The -m option should be null or greater than 0');
         }
 
         $limit = $input->getOption('limit');
         if ($limit < 1) {
-            throw new \InvalidArgumentException("The -l option should be null or greater than 1");
+            throw new \InvalidArgumentException('The -l option should be null or greater than 1');
         }
 
         $io = new SymfonyStyle($input, $output);

@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
- * Class QueueCreateCommand
+ * Class QueueCreateCommand.
  */
 class QueueCreateCommand extends Command implements ContainerAwareInterface
 {
@@ -96,7 +96,7 @@ class QueueCreateCommand extends Command implements ContainerAwareInterface
             'MessageRetentionPeriod'        => $input->getOption('message_retention_period'),
             'ReceiveMessageWaitTimeSeconds' => $input->getOption('receive_message_wait_time_seconds'),
             'VisibilityTimeout'             => $input->getOption('visibility_timeout'),
-            'ContentBasedDeduplication'     => $input->getOption('content_based_deduplication')
+            'ContentBasedDeduplication'     => $input->getOption('content_based_deduplication'),
         ]);
 
         $io->text(sprintf('Created successfully. New Queue URL: <comment>%s</comment>', $queueUrl));
