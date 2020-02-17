@@ -7,10 +7,10 @@ use TriTran\SqsQueueBundle\Service\QueueManager;
 use TriTran\SqsQueueBundle\Tests\app\KernelTestCase;
 
 /**
- * Class QueueAttCommandTest
+ * Class QueueAttrCommandTest
  * @package TriTran\SqsQueueBundle\Tests\Unit\Command
  */
-class QueueAttCommandTest extends KernelTestCase
+class QueueAttrCommandTest extends KernelTestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|QueueManager
