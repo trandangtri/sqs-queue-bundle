@@ -75,4 +75,18 @@ class QueueWorkerCommandTest extends KernelTestCase
         $output = $commandTester->getDisplay();
         $this->assertContains('Start listening to queue', $output);
     }
+
+    /**
+     * Test: invalid input limit should throw an exception
+     */
+    public function testInvalidInputLimit()
+    {
+        $commandTester = $this->createCommandTester(new QueueWorkerCommand());
+
+        $this->expectException(\InvalidArgumentException::class);
+        $commandTester->execute([
+            'name' => 'basic_queue',
+            '--limit' => 0
+        ]);
+    }
 }
