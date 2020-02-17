@@ -4,7 +4,7 @@ namespace TriTran\SqsQueueBundle\Tests\app;
 
 use AppKernel;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
-use Symfony\Component\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -66,7 +66,7 @@ class KernelTestCase extends SymfonyKernelTestCase
      */
     public function createCommandTester(Command $command)
     {
-        $application = new Application();
+        $application = new Application(static::$kernel);
         $application->add($command);
 
         $commandTester = new CommandTester($application->find($command->getName()));
