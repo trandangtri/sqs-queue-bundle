@@ -13,14 +13,13 @@ use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
  * Class QueueListCommand
- * @package TriTran\SqsQueueBundle\Command
  */
 class QueueListCommand extends Command implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -37,7 +36,7 @@ class QueueListCommand extends Command implements ContainerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

@@ -15,14 +15,13 @@ use TriTran\SqsQueueBundle\Service\BaseWorker;
 
 /**
  * Class QueueWorkerCommand
- * @package TriTran\SqsQueueBundle\Command
  */
 class QueueWorkerCommand extends Command implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -35,7 +34,7 @@ class QueueWorkerCommand extends Command implements ContainerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

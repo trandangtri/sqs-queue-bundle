@@ -14,14 +14,13 @@ use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
  * Class QueueDeleteCommand
- * @package TriTran\SqsQueueBundle\Command
  */
 class QueueDeleteCommand extends Command implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -42,7 +41,7 @@ class QueueDeleteCommand extends Command implements ContainerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -50,6 +49,7 @@ class QueueDeleteCommand extends Command implements ContainerAwareInterface
         if (!$input->getOption('force')) {
             $io->note('Option --force is mandatory to drop data.');
             $io->warning('This action should not be used in the production environment.');
+
             return;
         }
 

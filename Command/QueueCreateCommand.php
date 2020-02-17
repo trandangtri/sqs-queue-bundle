@@ -14,14 +14,13 @@ use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
  * Class QueueCreateCommand
- * @package TriTran\SqsQueueBundle\Command
  */
 class QueueCreateCommand extends Command implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -77,7 +76,7 @@ class QueueCreateCommand extends Command implements ContainerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -92,12 +91,12 @@ class QueueCreateCommand extends Command implements ContainerAwareInterface
         /** @var QueueManager $queueManager */
         $queueManager = $this->container->get('tritran.sqs_queue.queue_manager');
         $queueUrl = $queueManager->createQueue($queueName, [
-            'DelaySeconds' => $input->getOption('delay_seconds'),
-            'MaximumMessageSize' => $input->getOption('maximum_message_size'),
-            'MessageRetentionPeriod' => $input->getOption('message_retention_period'),
+            'DelaySeconds'                  => $input->getOption('delay_seconds'),
+            'MaximumMessageSize'            => $input->getOption('maximum_message_size'),
+            'MessageRetentionPeriod'        => $input->getOption('message_retention_period'),
             'ReceiveMessageWaitTimeSeconds' => $input->getOption('receive_message_wait_time_seconds'),
-            'VisibilityTimeout' => $input->getOption('visibility_timeout'),
-            'ContentBasedDeduplication' => $input->getOption('content_based_deduplication')
+            'VisibilityTimeout'             => $input->getOption('visibility_timeout'),
+            'ContentBasedDeduplication'     => $input->getOption('content_based_deduplication')
         ]);
 
         $io->text(sprintf('Created successfully. New Queue URL: <comment>%s</comment>', $queueUrl));
