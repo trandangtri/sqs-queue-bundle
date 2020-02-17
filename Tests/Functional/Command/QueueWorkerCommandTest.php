@@ -56,7 +56,7 @@ class QueueWorkerCommandTest extends KernelTestCase
 
         $this->expectException(\InvalidArgumentException::class);
         $commandTester->execute([
-            'name' => 'basic_queue',
+            'name'       => 'basic_queue',
             '--messages' => -1,
         ]);
     }
@@ -84,7 +84,7 @@ class QueueWorkerCommandTest extends KernelTestCase
 
         $this->expectException(\InvalidArgumentException::class);
         $commandTester->execute([
-            'name' => 'basic_queue',
+            'name'    => 'basic_queue',
             '--limit' => 0,
         ]);
     }

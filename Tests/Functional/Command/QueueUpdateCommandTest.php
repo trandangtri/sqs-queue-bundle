@@ -39,7 +39,7 @@ class QueueUpdateCommandTest extends KernelTestCase
     }
 
     /**
-     * Test: Update Queue attribute based on configuration without force option
+     * Test: Update Queue attribute based on configuration without force option.
      */
     public function testExecuteWithoutForce()
     {
@@ -51,7 +51,7 @@ class QueueUpdateCommandTest extends KernelTestCase
     }
 
     /**
-     * Test: Delete a queue without force option
+     * Test: Delete a queue without force option.
      */
     public function testExecute()
     {

@@ -32,7 +32,7 @@ class KernelTestCase extends SymfonyKernelTestCase
     /**
      * Returns service container.
      *
-     * @param bool  $reinitialize Force kernel reinitialization.
+     * @param bool  $reinitialize  Force kernel reinitialization.
      * @param array $kernelOptions Options used passed to kernel if it needs to be initialized.
      *
      * @return ContainerInterface
