@@ -2,22 +2,25 @@
 
 namespace TriTran\SqsQueueBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
- * Class QueueDeleteCommand
- * @package TriTran\SqsQueueBundle\Command
+ * Class QueueDeleteCommand.
  */
-class QueueDeleteCommand extends ContainerAwareCommand
+class QueueDeleteCommand extends Command implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -38,7 +41,7 @@ class QueueDeleteCommand extends ContainerAwareCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -46,6 +49,7 @@ class QueueDeleteCommand extends ContainerAwareCommand
         if (!$input->getOption('force')) {
             $io->note('Option --force is mandatory to drop data.');
             $io->warning('This action should not be used in the production environment.');
+
             return;
         }
 
@@ -54,7 +58,7 @@ class QueueDeleteCommand extends ContainerAwareCommand
         $io->title(sprintf('Start deleting the specified queue by URL <comment>%s</comment>', $queueUrl));
 
         /** @var QueueManager $queueManager */
-        $queueManager = $this->getContainer()->get('tritran.sqs_queue.queue_manager');
+        $queueManager = $this->container->get('tritran.sqs_queue.queue_manager');
         $queueManager->deleteQueue($queueUrl);
 
         $io->text('Deleted successfully');

@@ -2,22 +2,25 @@
 
 namespace TriTran\SqsQueueBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use TriTran\SqsQueueBundle\Service\QueueManager;
 
 /**
- * Class QueueCreateCommand
- * @package TriTran\SqsQueueBundle\Command
+ * Class QueueCreateCommand.
  */
-class QueueCreateCommand extends ContainerAwareCommand
+class QueueCreateCommand extends Command implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -73,12 +76,12 @@ class QueueCreateCommand extends ContainerAwareCommand
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $queueName = $input->getArgument('name');
-        if ($this->getContainer()->has(sprintf('tritran.sqs_queue.%s', $queueName))) {
+        if ($this->container->has(sprintf('tritran.sqs_queue.%s', $queueName))) {
             throw new \InvalidArgumentException(sprintf('Queue [%s] exists. Please use another name.', $queueName));
         }
 
@@ -86,14 +89,14 @@ class QueueCreateCommand extends ContainerAwareCommand
         $io->title(sprintf('Start creating a new queue which name is <comment>%s</comment>', $queueName));
 
         /** @var QueueManager $queueManager */
-        $queueManager = $this->getContainer()->get('tritran.sqs_queue.queue_manager');
+        $queueManager = $this->container->get('tritran.sqs_queue.queue_manager');
         $queueUrl = $queueManager->createQueue($queueName, [
             'DelaySeconds' => $input->getOption('delay_seconds'),
             'MaximumMessageSize' => $input->getOption('maximum_message_size'),
             'MessageRetentionPeriod' => $input->getOption('message_retention_period'),
             'ReceiveMessageWaitTimeSeconds' => $input->getOption('receive_message_wait_time_seconds'),
             'VisibilityTimeout' => $input->getOption('visibility_timeout'),
-            'ContentBasedDeduplication' => $input->getOption('content_based_deduplication')
+            'ContentBasedDeduplication' => $input->getOption('content_based_deduplication'),
         ]);
 
         $io->text(sprintf('Created successfully. New Queue URL: <comment>%s</comment>', $queueUrl));

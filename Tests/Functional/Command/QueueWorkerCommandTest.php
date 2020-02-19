@@ -7,8 +7,7 @@ use TriTran\SqsQueueBundle\Service\BaseWorker;
 use TriTran\SqsQueueBundle\Tests\app\KernelTestCase;
 
 /**
- * Class QueueUpdateCommandTest
- * @package TriTran\SqsQueueBundle\Tests\Functional\Command
+ * Class QueueWorkerCommandTest.
  */
 class QueueWorkerCommandTest extends KernelTestCase
 {
@@ -18,7 +17,7 @@ class QueueWorkerCommandTest extends KernelTestCase
     private $baseWorker;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setUp()
     {
@@ -36,7 +35,7 @@ class QueueWorkerCommandTest extends KernelTestCase
     }
 
     /**
-     * Test: start a worker for a non-existing queue
+     * Test: start a worker for a non-existing queue.
      */
     public function testExecuteWithNonExistingQueue()
     {
@@ -44,12 +43,12 @@ class QueueWorkerCommandTest extends KernelTestCase
 
         $this->expectException(\InvalidArgumentException::class);
         $commandTester->execute([
-            'name' => 'non-existing-queue'
+            'name' => 'non-existing-queue',
         ]);
     }
 
     /**
-     * Test: start a worker with an invalid value of amount of messages
+     * Test: start a worker with an invalid value of amount of messages.
      */
     public function testExecuteWithInvalidAmountMessages()
     {
@@ -58,21 +57,35 @@ class QueueWorkerCommandTest extends KernelTestCase
         $this->expectException(\InvalidArgumentException::class);
         $commandTester->execute([
             'name' => 'basic_queue',
-            '--messages' => -1
+            '--messages' => -1,
         ]);
     }
 
     /**
-     * Test: Start a worker for listening to a queue
+     * Test: Start a worker for listening to a queue.
      */
     public function testExecute()
     {
         $commandTester = $this->createCommandTester(new QueueWorkerCommand());
         $commandTester->execute([
-            'name' => 'basic_queue'
+            'name' => 'basic_queue',
         ]);
 
         $output = $commandTester->getDisplay();
         $this->assertContains('Start listening to queue', $output);
+    }
+
+    /**
+     * Test: invalid input limit should throw an exception.
+     */
+    public function testInvalidInputLimit()
+    {
+        $commandTester = $this->createCommandTester(new QueueWorkerCommand());
+
+        $this->expectException(\InvalidArgumentException::class);
+        $commandTester->execute([
+            'name' => 'basic_queue',
+            '--limit' => 0,
+        ]);
     }
 }

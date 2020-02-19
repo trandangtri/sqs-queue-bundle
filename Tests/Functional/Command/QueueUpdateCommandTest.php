@@ -7,8 +7,7 @@ use TriTran\SqsQueueBundle\Service\QueueManager;
 use TriTran\SqsQueueBundle\Tests\app\KernelTestCase;
 
 /**
- * Class QueueUpdateCommandTest
- * @package TriTran\SqsQueueBundle\Tests\Functional\Command
+ * Class QueueUpdateCommandTest.
  */
 class QueueUpdateCommandTest extends KernelTestCase
 {
@@ -18,7 +17,7 @@ class QueueUpdateCommandTest extends KernelTestCase
     private $queueManager;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setUp()
     {
@@ -40,7 +39,7 @@ class QueueUpdateCommandTest extends KernelTestCase
     }
 
     /**
-     * Test: Update Queue attribute based on configuration without force option
+     * Test: Update Queue attribute based on configuration without force option.
      */
     public function testExecuteWithoutForce()
     {
@@ -52,7 +51,7 @@ class QueueUpdateCommandTest extends KernelTestCase
     }
 
     /**
-     * Test: Delete a queue without force option
+     * Test: Delete a queue without force option.
      */
     public function testExecute()
     {

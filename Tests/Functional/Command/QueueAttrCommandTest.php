@@ -7,10 +7,9 @@ use TriTran\SqsQueueBundle\Service\QueueManager;
 use TriTran\SqsQueueBundle\Tests\app\KernelTestCase;
 
 /**
- * Class QueueAttCommandTest
- * @package TriTran\SqsQueueBundle\Tests\Unit\Command
+ * Class QueueAttrCommandTest.
  */
-class QueueAttCommandTest extends KernelTestCase
+class QueueAttrCommandTest extends KernelTestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|QueueManager
@@ -18,7 +17,7 @@ class QueueAttCommandTest extends KernelTestCase
     private $queueManager;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setUp()
     {
@@ -35,7 +34,7 @@ class QueueAttCommandTest extends KernelTestCase
     }
 
     /**
-     * Test: Retrieve the attribute of a specified queue
+     * Test: Retrieve the attribute of a specified queue.
      */
     public function testExecute()
     {
