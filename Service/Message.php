@@ -138,7 +138,7 @@ class Message
      *
      * @return Message
      */
-    public function setAttributes(array $messageAttributes)
+    public function setMessageAttributes(array $messageAttributes)
     {
         $this->messageAttributes = $messageAttributes;
 
