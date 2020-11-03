@@ -24,6 +24,11 @@ class Message
     private $attributes;
 
     /**
+     * @var array
+     */
+    private $messageAttributes;
+
+    /**
      * @var string
      */
     private $groupId;
@@ -49,11 +54,13 @@ class Message
     public function __construct(
         string $body = '',
         array $attributes = [],
+        array $messageAttributes = [],
         string $groupId = '',
         string $deduplicationId = ''
     ) {
         $this->body = $body;
         $this->attributes = $attributes;
+        $this->messageAttributes = $messageAttributes;
         $this->groupId = $groupId;
         $this->deduplicationId = $deduplicationId;
     }
@@ -114,6 +121,26 @@ class Message
     public function setAttributes(array $attributes)
     {
         $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMessageAttributes(): array
+    {
+        return $this->messageAttributes;
+    }
+
+    /**
+     * @param array $messageAttributes
+     *
+     * @return Message
+     */
+    public function setAttributes(array $messageAttributes)
+    {
+        $this->messageAttributes = $messageAttributes;
 
         return $this;
     }
